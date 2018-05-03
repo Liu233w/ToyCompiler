@@ -26,7 +26,8 @@ namespace Tokenizer.Test
                     new AutomataState
                     {
                         Asserter = char.IsLetter,
-                        Next = { endState, }
+                        Next = { endState, },
+                        IdentifierType = "name",
                     }
                 }
             };
