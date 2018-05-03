@@ -54,8 +54,6 @@ namespace Tokenizer
 
             Automata = new AutomataState
             {
-                Asserter = null,
-                IdentifierType = null,
                 Next =
                 {
                     space,
@@ -68,7 +66,7 @@ namespace Tokenizer
                     new AutomataState
                     {
                         Asserter = char.IsLetter,
-                        IdentifierType = null,
+                        IdentifierType = "name",
                         Next =
                         {
                             nameEndState,
@@ -77,13 +75,11 @@ namespace Tokenizer
                     new AutomataState
                     {
                         Asserter = c => c == '/',
-                        IdentifierType = null,
                         Next =
                         {
                             new AutomataState
                             {
                                 Asserter = c => c == '*',
-                                IdentifierType = null,
                                 Next = {commentBody}
                             }
                         }
