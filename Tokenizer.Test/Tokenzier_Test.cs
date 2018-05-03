@@ -28,7 +28,7 @@ namespace Tokenizer.Test
                 identifier.IdentifierType.ShouldBe(needs[idx].type);
                 identifier.Recognized.ShouldBe(needs[idx].recognized);
 
-                if (++idx >= needs.Length)
+                if (++idx > needs.Length)
                 {
                     throw new Exception($"长度不对，应有 {needs.Length} 个 Token");
                 }
