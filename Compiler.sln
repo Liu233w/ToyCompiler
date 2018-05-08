@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokenizer", "Tokenizer\Tokenizer.csproj", "{C6C8FA28-AFDC-4F28-ADE2-DF0F1033948B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tokenizer", "Tokenizer\Tokenizer.csproj", "{C6C8FA28-AFDC-4F28-ADE2-DF0F1033948B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokenizer.Test", "Tokenizer.Test\Tokenizer.Test.csproj", "{72946342-27F7-4D17-80A0-16109D2EFA1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tokenizer.Test", "Tokenizer.Test\Tokenizer.Test.csproj", "{72946342-27F7-4D17-80A0-16109D2EFA1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalyzer", "LexicalAnalyzer\LexicalAnalyzer.csproj", "{60336AD7-D0A6-412A-A569-6446E976101F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalyzer.Test", "LexicalAnalyzer.Test\LexicalAnalyzer.Test.csproj", "{4C06845D-98CB-4585-80F5-053533D69C0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{72946342-27F7-4D17-80A0-16109D2EFA1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72946342-27F7-4D17-80A0-16109D2EFA1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72946342-27F7-4D17-80A0-16109D2EFA1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60336AD7-D0A6-412A-A569-6446E976101F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60336AD7-D0A6-412A-A569-6446E976101F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60336AD7-D0A6-412A-A569-6446E976101F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60336AD7-D0A6-412A-A569-6446E976101F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C06845D-98CB-4585-80F5-053533D69C0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C06845D-98CB-4585-80F5-053533D69C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C06845D-98CB-4585-80F5-053533D69C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C06845D-98CB-4585-80F5-053533D69C0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
