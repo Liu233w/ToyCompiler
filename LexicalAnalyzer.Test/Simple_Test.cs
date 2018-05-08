@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DeepEqual.Syntax;
 using Shouldly;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace LexicalAnalyzer.Test
 
             var res = Simple.Analyze(buffer);
 
-            res.ShouldBeSameAs(new TreeNode
+            res.ShouldDeepEqual(new TreeNode
             {
                 Token = 'S',
                 Children = new List<Tree>

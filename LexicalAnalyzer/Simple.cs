@@ -52,6 +52,8 @@ namespace LexicalAnalyzer
 
                 if (LookupNode(buffer, startIdx, node))
                 {
+                    // 这里是一个子状态，假如这里返回了之后，在父状态处解析失败，必须还要回到这里来运行 way 2
+                    // 如果 c# 有 call/cc 就方便多了
                     return true;
                 }
 
