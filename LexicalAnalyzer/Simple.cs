@@ -214,7 +214,10 @@ namespace LexicalAnalyzer
 
             do
             {
-                root = _callingStack.Peek().Current as TreeNode;
+                root = _callingStack.Peek().Tree ?? _callingStack.Peek().Current as TreeNode;
+                // 从 json 恢复之后这两个对象就失去联系了
+                _callingStack.Peek().Current = root;
+
                 var success = ExecuteAndGetResult();
 
                 if (success)
