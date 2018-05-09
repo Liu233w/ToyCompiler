@@ -337,6 +337,7 @@ namespace LexicalAnalyzer
                     Debug.Assert(treeNode != null, "之后的都应该是非终止符");
 
                     // default ChildIndex = 0
+                    Debug.Assert(treeNode.Children.Count > 0, "当前情况下每个非终止符应当能够产生多个符号");
                     if (frame.ChildIdx >= treeNode.Children.Count)
                     {
                         // 检查完了所有子节点
