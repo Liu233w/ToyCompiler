@@ -32,7 +32,6 @@ namespace LexicalAnalyzer
 
                 ChildIdx = 0;
                 RuleIdx = 0;
-                Tree = null;
                 Pc = 0;
             }
 
@@ -47,8 +46,6 @@ namespace LexicalAnalyzer
             #region 函数内部变量
 
             public int RuleIdx { get; set; }
-
-            public TreeNode Tree { get; set; }
 
             public int ChildIdx { get; set; }
 
@@ -214,10 +211,7 @@ namespace LexicalAnalyzer
 
             do
             {
-                root = _callingStack.Peek().Tree ?? _callingStack.Peek().Current as TreeNode;
-                // 从 json 恢复之后这两个对象就失去联系了
-                _callingStack.Peek().Current = root;
-
+                root = _callingStack.Peek().Current as TreeNode;
                 var success = ExecuteAndGetResult();
 
                 if (success)
@@ -272,6 +266,8 @@ namespace LexicalAnalyzer
             // 当前函数栈帧
             var frame = _callingStack.Peek();
 
+            var treeNode = frame.Current as TreeNode;
+
             // 根据程序计数器决定执行哪一段代码
             switch (frame.Pc)
             {
@@ -286,8 +282,7 @@ namespace LexicalAnalyzer
 
                     // 确保语法树的当前节点是 非终结符
                     // 根据定义，起始符号S必须是非终结符，因此可以直接处理
-                    frame.Tree = frame.Current as TreeNode;
-                    if (frame.Tree == null)
+                    if (treeNode == null)
                     {
                         return Return(false);
                     }
@@ -296,10 +291,12 @@ namespace LexicalAnalyzer
                 }
                 case 1:
                 {
+                    Debug.Assert(treeNode != null, "之后的都应该是非终止符");
+
                     // 在规则中找到一个匹配的产生式，如果产生式不存在，返回 false
                     while (frame.RuleIdx < _rules.Count)
                     {
-                        if (frame.Tree.Token == _rules[frame.RuleIdx].From)
+                        if (treeNode.Token == _rules[frame.RuleIdx].From)
                         {
                             return GoToNextPc();
                         }
@@ -313,21 +310,23 @@ namespace LexicalAnalyzer
                 }
                 case 2:
                 {
+                    Debug.Assert(treeNode != null, "之后的都应该是非终止符");
+
                     // 保存当前调用栈状态，便于以后回溯
                     SaveCurrentContinuation();
 
                     // 根据产生式规则来设定语法树的子节点
-                    frame.Tree.Children = new List<Tree>();
+                    treeNode.Children = new List<Tree>();
                     foreach (var c in _rules[frame.RuleIdx].To)
                     {
                         if (char.IsUpper(c))
                         {
                             // 假设大写的都是非终结符号，小写的都是终结符号
-                            frame.Tree.Children.Add(new TreeNode { Token = c });
+                            treeNode.Children.Add(new TreeNode { Token = c });
                         }
                         else
                         {
-                            frame.Tree.Children.Add(new TreeLeaf { Token = c });
+                            treeNode.Children.Add(new TreeLeaf { Token = c });
                         }
                     }
 
@@ -335,18 +334,22 @@ namespace LexicalAnalyzer
                 }
                 case 3:
                 {
+                    Debug.Assert(treeNode != null, "之后的都应该是非终止符");
+
                     // default ChildIndex = 0
-                    if (frame.ChildIdx >= frame.Tree.Children.Count)
+                    if (frame.ChildIdx >= treeNode.Children.Count)
                     {
                         // 检查完了所有子节点
                         return Return(true);
                     }
 
                     return CallNextFunctionAndSetReturnPoint(4, frame.StartIdx + frame.ChildIdx,
-                        frame.Tree.Children[frame.ChildIdx]);
+                        treeNode.Children[frame.ChildIdx]);
                 }
                 case 4:
                 {
+                    Debug.Assert(treeNode != null, "之后的都应该是非终止符");
+
                     Debug.Assert(stackReturnedResult.HasValue, "上一个函数调用应当返回值");
                     var success = stackReturnedResult.Value;
                     if (!success)
