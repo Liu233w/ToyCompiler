@@ -1,6 +1,5 @@
-using System;
 using System.Collections.Generic;
-using DeepEqual.Syntax;
+using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
 
@@ -18,7 +17,7 @@ namespace LexicalAnalyzer.Test
         [Fact]
         public void Analyze_能够正确分析语法式()
         {
-            var buffer = "cabd";
+            const string buffer = "cabd";
 
             var res = _analyzer.Analyze(buffer);
 
@@ -52,6 +51,20 @@ namespace LexicalAnalyzer.Test
                     },
                 }
             });
+        }
+    }
+
+    public static class TestHelper
+    {
+        public static string ToJsonString(this object obj)
+        {
+            return JsonConvert.SerializeObject(obj,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+        }
+
+        public static void ShouldDeepEqual(this object obj, object that)
+        {
+            obj.ToJsonString().ShouldBe(that.ToJsonString());
         }
     }
 }
