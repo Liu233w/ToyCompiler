@@ -154,7 +154,9 @@ namespace LexicalAnalyzer
                     TypeNameHandling = TypeNameHandling.All,
                 });
 
-            ++_callingStack.Peek().RuleIdx;
+            var frame = _callingStack.Peek();
+            ++frame.RuleIdx;
+            frame.Pc = 1;
 
             return true;
         }
