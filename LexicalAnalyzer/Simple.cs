@@ -1,5 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading;
 
 namespace LexicalAnalyzer
 {
@@ -9,20 +14,117 @@ namespace LexicalAnalyzer
     /// S → cAd
     /// A → a
     /// A → ab
+    ///
+    /// 在实现上，本类在外部手动模拟了函数的调用栈，以实现类似 call/cc 的效果。
+    /// 为了可读性，不使用 cps 变换来写这个算法。
     /// </summary>
-    public static class Simple
+    public class Simple
     {
+
+        class Rule
+        {
+            public Rule(char from, string to)
+            {
+                From = from;
+                To = to;
+            }
+
+            public char From { get; set; }
+
+            public string To { get; set; }
+        }
+        /// <summary>
+        /// 一个栈帧。用于人工模拟的调用栈
+        /// </summary>
+        class CallingStackFrame
+        { }
+
+        /// <summary>
+        /// 表示上个函数调用运行结果的栈帧
+        /// </summary>
+        class FunctionResultFrame : CallingStackFrame
+        {
+            public FunctionResultFrame(bool result)
+            {
+                Result = result;
+            }
+
+            public bool Result { get; private set; }
+        }
+
+        /// <summary>
+        /// 表示函数参数的栈帧
+        /// </summary>
+        class FunctionParamFrame : CallingStackFrame
+        {
+            public FunctionParamFrame(int startIdx, Tree current)
+            {
+                StartIdx = startIdx;
+                Current = current;
+            }
+
+            public int StartIdx { get; private set; }
+
+            public Tree Current { get; private set; }
+
+            /// <summary>
+            /// 函数内部栈帧，用于存储函数内部分配的内存
+            /// </summary>
+            public (int ruleIdx, TreeNode tree, int childIdx) Inner { get; set; }
+        }
+
+        private List<Rule> _rules;
+        private Stack<CallingStackFrame> _callingStack;
+        private Stack<Stack<CallingStackFrame>> _resumeableCallingStack;
+        private string _buffer;
+
+        public Simple()
+        {
+            _rules = new List<Rule>
+            {
+                new Rule('S', "aA"),
+                new Rule('S', "cAd"),
+                new Rule('A', "a"),
+                new Rule('A', "ab"),
+            };
+        }
+
+        private void ResetStack()
+        {
+            _callingStack = new Stack<CallingStackFrame>();
+
+            _resumeableCallingStack = new Stack<Stack<CallingStackFrame>>();
+        }
+
         /// <summary>
         /// 分析token序列，生成语法树（这里假设一个char是一个 token）
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public static Tree Analyze(string buffer)
+        public Tree Analyze(string buffer)
         {
-            // 起始节点
-            var root = new TreeNode {Token = 'S'};
+            _buffer = buffer;
+            ResetStack();
 
-            var success = AnalyzeNode(buffer, 0, root);
+            // 起始节点
+            var root = new TreeNode { Token = 'S' };
+            _callingStack.Push(new FunctionParamFrame(0, root));
+
+            // 未运算出结果
+            while (_callingStack.Count > 1 || !(_callingStack.Peek() is FunctionResultFrame))
+            {
+                var state = AnalyzeNode();
+                if (state.GetEnumerator().MoveNext())
+                {
+                    // 运行到了应当递归调用的地方
+                }
+                else
+                {
+                    
+                }
+            }
+
+            var success = ((FunctionResultFrame) _callingStack.Pop()).Result;
             if (!success)
             {
                 throw new InvalidOperationException("不是一个合格的语法");
@@ -31,111 +133,75 @@ namespace LexicalAnalyzer
             return root;
         }
 
-        private static bool AnalyzeNode(string buffer, int startIdx, Tree current)
+        /// <summary>
+        /// 从模拟的调用栈运行分析函数。参数从调用栈中获取，返回值会被压入到调用栈中。
+        /// </summary>
+        /// <returns>
+        /// 当前函数的控制流是否结束。
+        /// 如果函数递归调用了下一个函数，会将其参数压入到调用栈中，并 yield return；
+        /// 如果函数返回，会将其返回值压入到调用栈中，并 yield break。
+        /// </returns>
+        private IEnumerable AnalyzeNode()
         {
-            if (current.Token == 'S')
+            var param = _callingStack.Peek() as FunctionParamFrame;
+            Debug.Assert(param != null, nameof(param) + " != null");
+
+            foreach (var rule in _rules)
             {
-                var node = current as TreeNode;
-
-                // way 1
-                node.Children = new List<Tree>
+                if (_buffer[param.StartIdx] == rule.From)
                 {
-                    new TreeLeaf
+                    if (!(param.Current is TreeNode tree))
                     {
-                        Token = 'a',
-                    },
-                    new TreeNode
-                    {
-                        Token = 'A',
-                    },
-                };
+                        Return(false);
 
-                if (LookupNode(buffer, startIdx, node))
-                {
-                    // 这里是一个子状态，假如这里返回了之后，在父状态处解析失败，必须还要回到这里来运行 way 2
-                    // 如果 c# 有 call/cc 就方便多了
-                    return true;
+                        // 结束调用
+                        yield break;
+                    }
+
+                    tree.Token = rule.From;
+                    tree.Children = rule.To.Select(new Func<char, Tree>(c =>
+                    {
+                        if (char.IsUpper(c))
+                        {
+                            // 假设大写的都是非终结符号，小写的都是终结符号
+                            return new TreeNode { Token = c };
+                        }
+                        else
+                        {
+                            return new TreeLeaf { Token = c };
+                        }
+                    })).ToList();
+
+                    for (int i = 0; i < tree.Children.Count; ++i)
+                    {
+                        _callingStack.Push(new FunctionParamFrame(param.StartIdx + i + 1, tree.Children[i]));
+                        // 挂起本函数
+                        yield return 0;
+
+                        var result = _callingStack.Pop() as FunctionResultFrame;
+                        Debug.Assert(result != null, nameof(result) + " != null");
+                        bool success = result.Result;
+
+                        if (!success)
+                        {
+                            Return(false);
+                            yield break;
+                        }
+                    }
                 }
-
-                // way 2
-                node.Children = new List<Tree>
-                {
-                    new TreeLeaf
-                    {
-                        Token = 'c',
-                    },
-                    new TreeNode
-                    {
-                        Token = 'A',
-                    },
-                    new TreeLeaf
-                    {
-                        Token = 'd',
-                    },
-                };
-
-                if (LookupNode(buffer, startIdx, node))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-            else if (current.Token == 'A')
-            {
-                var node = current as TreeNode;
-
-                // way 1
-                node.Children = new List<Tree>
-                {
-                    new TreeLeaf{Token = 'a'},
-                };
-
-                if (LookupNode(buffer, startIdx, node))
-                {
-                    return true;
-                }
-
-                // way 2
-                node.Children = new List<Tree>
-                {
-                    new TreeLeaf{Token = 'a'},
-                    new TreeLeaf{Token = 'b'},
-                };
-
-                if (LookupNode(buffer, startIdx, node))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-            else
-            {
-                // 终止结点
-                return current.Token == buffer[startIdx];
             }
         }
 
         /// <summary>
-        /// 递归查找子树并生成语法树
+        /// 退栈并将结果压入到栈中
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="idx"></param>
-        /// <param name="current"></param>
-        /// <returns></returns>
-        private static bool LookupNode(string buffer, int idx, TreeNode current)
+        /// <param name="result"></param>
+        private void Return(bool result)
         {
-            foreach (var tree in current.Children)
-            {
-                var finded = AnalyzeNode(buffer, idx++, tree);
-                if (!finded)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            // 移除函数参数
+            _callingStack.Pop();
+            // 压入函数结果
+            _callingStack.Push(new FunctionResultFrame(result));
         }
     }
 }
