@@ -133,11 +133,6 @@ namespace LexicalAnalyzer
             {
                 case 0:
                 {
-                    // 受实现限制，这里必须使用类似于 C 语言的方式在函数开头统一初始化
-                    v.Tree = null;
-                    v.ChildIdx = 0;
-                    v.RuleIdx = 0;
-
                     // 使用花括号来避免在多个 case 之间共享状态
                     if (p.Current is TreeLeaf leaf)
                     {
@@ -152,6 +147,9 @@ namespace LexicalAnalyzer
                     {
                         return Return(false);
                     }
+
+                    // 开始循环(入口点 1)
+                    v.RuleIdx = 0;
 
                     return Continue();
                 }
@@ -205,11 +203,13 @@ namespace LexicalAnalyzer
                         }
                     }
 
+                    // 开始循环(入口点 4)
+                    v.ChildIdx = 0;
+
                     return Continue();
                 }
                 case 4:
                 {
-                    // default ChildIndex = 0
                     Debug.Assert(v.Tree.Children.Count > 0, "当前情况下每个非终止符应当能够产生多个符号");
                     if (v.ChildIdx >= v.Tree.Children.Count)
                     {
