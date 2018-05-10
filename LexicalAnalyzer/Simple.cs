@@ -5,6 +5,48 @@ using System.Linq;
 
 namespace LexicalAnalyzer
 {
+    public class SimpleParam : ICloneable
+    {
+        public int StartIdx { get; set; }
+
+        public Tree Current { get; set; }
+
+        /// <summary>
+        /// 在复制时不对 Tree 进行深拷贝，而是直接复制引用，便于在恢复续延时对相同的对象保持引用
+        /// </summary>
+        public object Clone()
+        {
+            return new SimpleParam
+            {
+                StartIdx = StartIdx,
+                Current = Current
+            };
+        }
+    }
+
+    public class SimpleVariable : ICloneable
+    {
+
+        public int RuleIdx { get; set; }
+
+        public TreeNode Tree { get; set; }
+
+        public int ChildIdx { get; set; }
+
+        /// <summary>
+        /// 在复制时不对 Tree 进行深拷贝，而是直接复制引用，便于在恢复续延时对相同的对象保持引用
+        /// </summary>
+        public object Clone()
+        {
+            return new SimpleVariable
+            {
+                ChildIdx = ChildIdx,
+                Tree = Tree,
+                RuleIdx = RuleIdx,
+            };
+        }
+    }
+
     /// <summary>
     /// 手写的分析器，推导式：
     /// S → aA
@@ -14,154 +56,39 @@ namespace LexicalAnalyzer
     ///
     /// 在实现上，本类在外部手动模拟了函数的调用栈，以实现类似 call/cc 的效果。
     /// 为了可读性，不使用 cps 变换来写这个算法。
+    ///
+    /// 如果不能解析语法树，返回 null
     /// </summary>
-    public class Simple
+    public class Simple : StackMachine<SimpleParam, SimpleVariable, bool>
     {
-
-        #region 调用栈相关
-
         /// <summary>
-        /// 一个栈帧。用于人工模拟的调用栈
+        /// 分析token序列，生成语法树（这里假设一个char是一个 token）
         /// </summary>
-        class CallingStackFrame
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public static TreeNode Analyze(string buffer)
         {
-            public CallingStackFrame(int startIdx, Tree current)
-            {
-                StartIdx = startIdx;
-                Current = current;
+            var function = new Simple(buffer);
 
-                ChildIdx = 0;
-                RuleIdx = 0;
-                Tree = null;
-                Pc = 0;
+            // 起始节点
+            var root = new TreeNode { Token = 'S' };
+
+            var success = function.Run(new SimpleParam { Current = root, StartIdx = 0 });
+            while (!success)
+            {
+                if (function._backtracings.Count == 0)
+                {
+                    return null;
+                }
+
+                var continuation = function._backtracings.Pop();
+                success = function.ResumeAtContinuation(continuation, true);
             }
 
-            public CallingStackFrame(CallingStackFrame that)
-            {
-                this.Tree = that.Tree;
-                this.ChildIdx = that.ChildIdx;
-                this.Current = that.Current;
-                this.Pc = that.Pc;
-                this.Result = that.Result;
-                this.RuleIdx = that.RuleIdx;
-                this.StartIdx = that.StartIdx;
-            }
-
-            #region 函数参数
-
-            public int StartIdx { get; set; }
-
-            public Tree Current { get; set; }
-
-            #endregion
-
-            #region 函数内部变量
-
-            public int RuleIdx { get; set; }
-
-            public TreeNode Tree { get; set; }
-
-            public int ChildIdx { get; set; }
-
-            #endregion
-
-            #region 返回值
-
-            /// <summary>
-            /// 函数返回值，如果为 null 代表函数还没有返回
-            /// </summary>
-            public bool? Result { get; set; }
-
-            #endregion
-
-            /// <summary>
-            /// 当前函数的程序计数器，表示运行到了哪一部分。在恢复函数状态时使用。
-            /// </summary>
-            public int Pc { get; set; }
+            Debug.Assert(root != null, "最后返回处的语法树应该为 TreeNode");
+            return root;
         }
 
-        #region 在DoAnalyzeByStep函数内部使用的状态函数
-
-        /// <summary>
-        /// 退出当前函数
-        /// </summary>
-        /// <param name="result">当前函数的返回值</param>
-        private bool Return(bool result)
-        {
-            var frame = _callingStack.Peek();
-            frame.Result = result;
-            frame.Pc = -1;
-
-            return true;
-        }
-
-        /// <summary>
-        /// 调用下个函数，在调用之前先设置返回点
-        /// </summary>
-        /// <param name="pc">返回点。在下个函数返回之后进入哪个位置</param>
-        /// <param name="startIdx"></param>
-        /// <param name="current"></param>
-        /// <returns></returns>
-        private bool CallNextFunctionAndSetReturnPoint(int pc, int startIdx, Tree current)
-        {
-            _callingStack.Peek().Pc = pc;
-            _callingStack.Push(new CallingStackFrame(startIdx, current));
-            return false;
-        }
-
-        /// <summary>
-        /// 跳到下一个状态
-        /// </summary>
-        /// <returns></returns>
-        private bool GoToNextPc()
-        {
-            ++_callingStack.Peek().Pc;
-            return false;
-        }
-
-        /// <summary>
-        /// 跳到某个状态
-        /// </summary>
-        /// <param name="pc"></param>
-        /// <returns></returns>
-        private bool GoTo(int pc)
-        {
-            _callingStack.Peek().Pc = pc;
-            return false;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 保存当前上下文
-        /// </summary>
-        private void SaveCurrentContinuation()
-        {
-            // 获得的顺序是相反的，必须 reverse 一次
-            var snapshot = _callingStack.Select(item => new CallingStackFrame(item)).Reverse();
-            _callingStackSnapshots.Push(new Stack<CallingStackFrame>(snapshot));
-        }
-
-        /// <summary>
-        /// 从最近的续延处重启运算，同时改变一些状态。假如没有最近的续延，返回 false
-        /// </summary>
-        /// <returns></returns>
-        private bool TryContinueWithRecentContinuation()
-        {
-            if (_callingStackSnapshots.Count <= 0)
-            {
-                return false;
-            }
-
-            _callingStack = _callingStackSnapshots.Pop();
-            var frame = _callingStack.Peek();
-            ++frame.RuleIdx;
-            frame.Pc = 1;
-
-            return true;
-        }
-
-        #endregion
 
         class Rule
         {
@@ -176,12 +103,11 @@ namespace LexicalAnalyzer
             public string To { get; set; }
         }
 
-        private List<Rule> _rules;
-        private Stack<CallingStackFrame> _callingStack;
-        private Stack<Stack<CallingStackFrame>> _callingStackSnapshots;
-        private string _buffer;
+        private readonly List<Rule> _rules;
+        private readonly string _buffer;
+        private readonly Stack<Continuation> _backtracings;
 
-        public Simple()
+        private Simple(string buffer)
         {
             _rules = new List<Rule>
             {
@@ -190,118 +116,57 @@ namespace LexicalAnalyzer
                 new Rule('A', "a"),
                 new Rule('A', "ab"),
             };
-        }
 
-        private void ResetStack()
-        {
-            _callingStack = new Stack<CallingStackFrame>();
-            _callingStackSnapshots = new Stack<Stack<CallingStackFrame>>();
-        }
-
-        /// <summary>
-        /// 分析token序列，生成语法树（这里假设一个char是一个 token）
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
-        public TreeNode Analyze(string buffer)
-        {
             _buffer = buffer;
-            ResetStack();
-
-            // 起始节点
-            var root = new TreeNode { Token = 'S' };
-            _callingStack.Push(new CallingStackFrame(0, root));
-
-            do
-            {
-                var success = ExecuteAndGetResult();
-
-                if (success)
-                {
-                    Debug.Assert(root != null, "最后返回处的语法树应该为 TreeNode");
-                    return root;
-                }
-            } while (TryContinueWithRecentContinuation());
-
-            throw new InvalidOperationException("不是一个合格的语法");
+            _backtracings = new Stack<Continuation>();
         }
 
-        /// <summary>
-        /// 在模拟的调用栈上运行函数并得到结果
-        /// </summary>
-        /// <returns></returns>
-        private bool ExecuteAndGetResult()
+        protected override bool StepMove(
+            SimpleParam p,
+            SimpleVariable v,
+            int pc,
+            bool lastReturned,
+            object callCCReturned)
         {
-            // 上次运算的结果
-            bool? stackReturnedResult = null;
-
-            while (_callingStack.Count > 0)
-            {
-                var done = DoAnalyzeByStep(stackReturnedResult);
-                stackReturnedResult = null;
-
-                if (!done) continue;
-
-                // 当前函数已返回，该退栈了
-                stackReturnedResult = _callingStack.Pop().Result;
-                Debug.Assert(stackReturnedResult.HasValue, "函数应当有返回值");
-            }
-
-            Debug.Assert(stackReturnedResult != null, "至少运行了一次");
-            return stackReturnedResult.Value;
-        }
-
-        /// <summary>
-        /// 从模拟的调用栈运行分析函数。参数从调用栈中获取，返回值会被压入到调用栈中。
-        /// </summary>
-        /// <param name="stackReturnedResult">
-        /// 递归调用的函数退栈时的返回值。
-        /// 在函数退栈时，上个函数的返回值应当作为此参数传进来。
-        /// </param>
-        /// <returns>
-        /// 当前函数的控制流是否结束。
-        /// 如果函数递归调用了下一个函数，会将该函数的栈帧压入到调用栈中，并返回 true；
-        /// 如果函数返回，会在栈帧中设置本函数的返回值，并返回 false。
-        /// </returns>
-        private bool DoAnalyzeByStep(bool? stackReturnedResult = null)
-        {
-            // 当前函数栈帧
-            var frame = _callingStack.Peek();
-
             // 根据程序计数器决定执行哪一段代码
-            switch (frame.Pc)
+            switch (pc)
             {
                 case 0:
                 {
+                    // 受实现限制，这里必须使用类似于 C 语言的方式在函数开头统一初始化
+                    v.Tree = null;
+                    v.ChildIdx = 0;
+                    v.RuleIdx = 0;
+
                     // 使用花括号来避免在多个 case 之间共享状态
-                    if (frame.Current is TreeLeaf leaf)
+                    if (p.Current is TreeLeaf leaf)
                     {
                         // 根据语法树，当前应当是终结符号
-                        return Return(_buffer[frame.StartIdx] == leaf.Token);
+                        return Return(_buffer[p.StartIdx] == leaf.Token);
                     }
 
                     // 确保语法树的当前节点是 非终结符
                     // 根据定义，起始符号S必须是非终结符，因此可以直接处理
-                    frame.Tree = frame.Current as TreeNode;
-                    if (frame.Tree == null)
+                    v.Tree = p.Current as TreeNode;
+                    if (v.Tree == null)
                     {
                         return Return(false);
                     }
 
-                    return GoToNextPc();
+                    return Continue();
                 }
                 case 1:
                 {
                     // 在规则中找到一个匹配的产生式，如果产生式不存在，返回 false
-                    while (frame.RuleIdx < _rules.Count)
+                    while (v.RuleIdx < _rules.Count)
                     {
-                        if (frame.Tree.Token == _rules[frame.RuleIdx].From)
+                        if (v.Tree.Token == _rules[v.RuleIdx].From)
                         {
-                            return GoToNextPc();
+                            return Continue();
                         }
                         else
                         {
-                            ++frame.RuleIdx;
+                            ++v.RuleIdx;
                         }
                     }
 
@@ -310,51 +175,66 @@ namespace LexicalAnalyzer
                 case 2:
                 {
                     // 保存当前调用栈状态，便于以后回溯
-                    SaveCurrentContinuation();
+                    return CallCC(cont =>
+                    {
+                        _backtracings.Push(cont);
+                        return false;
+                    });
+                }
+                case 3:
+                {
+                    var shouldSkipTheRule = (bool) callCCReturned;
+                    if (shouldSkipTheRule)
+                    {
+                        ++v.RuleIdx;
+                        return GoTo(1);
+                    }
 
                     // 根据产生式规则来设定语法树的子节点
-                    frame.Tree.Children = new List<Tree>();
-                    foreach (var c in _rules[frame.RuleIdx].To)
+                    v.Tree.Children = new List<Tree>();
+                    foreach (var c in _rules[v.RuleIdx].To)
                     {
                         if (char.IsUpper(c))
                         {
                             // 假设大写的都是非终结符号，小写的都是终结符号
-                            frame.Tree.Children.Add(new TreeNode { Token = c });
+                            v.Tree.Children.Add(new TreeNode { Token = c });
                         }
                         else
                         {
-                            frame.Tree.Children.Add(new TreeLeaf { Token = c });
+                            v.Tree.Children.Add(new TreeLeaf { Token = c });
                         }
                     }
 
-                    return GoToNextPc();
+                    return Continue();
                 }
-                case 3:
+                case 4:
                 {
                     // default ChildIndex = 0
-                    Debug.Assert(frame.Tree.Children.Count > 0, "当前情况下每个非终止符应当能够产生多个符号");
-                    if (frame.ChildIdx >= frame.Tree.Children.Count)
+                    Debug.Assert(v.Tree.Children.Count > 0, "当前情况下每个非终止符应当能够产生多个符号");
+                    if (v.ChildIdx >= v.Tree.Children.Count)
                     {
                         // 检查完了所有子节点
                         return Return(true);
                     }
 
-                    return CallNextFunctionAndSetReturnPoint(4, frame.StartIdx + frame.ChildIdx,
-                        frame.Tree.Children[frame.ChildIdx]);
+                    return RecursiveCall(new SimpleParam
+                    {
+                        Current = v.Tree.Children[v.ChildIdx],
+                        StartIdx = p.StartIdx + v.ChildIdx,
+                    });
                 }
-                case 4:
+                case 5:
                 {
-                    Debug.Assert(stackReturnedResult.HasValue, "上一个函数调用应当返回值");
-                    var success = stackReturnedResult.Value;
+                    var success = lastReturned;
                     if (!success)
                     {
                         return Return(false);
                     }
 
-                    ++frame.ChildIdx;
+                    ++v.ChildIdx;
 
                     // 这里没法用循环，只能用 goto 了。
-                    return GoTo(3);
+                    return GoTo(4);
                 }
                 default:
                 {

@@ -7,19 +7,12 @@ namespace LexicalAnalyzer.Test
 {
     public class Simple_Test
     {
-        private readonly Simple _analyzer;
-
-        public Simple_Test()
-        {
-            _analyzer = new Simple();
-        }
-
         [Fact]
         public void Analyze_能够正确分析语法式()
         {
             const string buffer = "cabd";
 
-            var res = _analyzer.Analyze(buffer);
+            var res = Simple.Analyze(buffer);
 
             res.ShouldDeepEqual(new TreeNode
             {
