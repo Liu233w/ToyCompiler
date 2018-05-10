@@ -78,7 +78,8 @@ namespace LexicalAnalyzer
 
             // 函数的返回值代表从 startIdx 前进了几步，便于后续的计算。如果返回 -1，代表解析错误
             var scannedLength = function.Run(new SimpleParam { Current = root, StartIdx = 0 });
-            while (scannedLength == -1)
+            // 如果识别失败或者没有识别到指定长度，就从 continuation 继续识别
+            while (scannedLength == -1 || scannedLength != buffer.Length)
             {
                 if (function._backtracings.Count == 0)
                 {
@@ -87,12 +88,6 @@ namespace LexicalAnalyzer
 
                 var continuation = function._backtracings.Pop();
                 scannedLength = function.ResumeAtContinuation(continuation, true);
-            }
-
-            if (scannedLength != buffer.Length)
-            {
-                // 没读到结尾就返回了，说明语法树不匹配
-                return null;
             }
 
             Debug.Assert(root != null, "最后返回处的语法树应该为 TreeNode");
