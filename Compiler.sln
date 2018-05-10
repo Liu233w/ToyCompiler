@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexicalAnalyzer", "LexicalA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexicalAnalyzer.Test", "LexicalAnalyzer.Test\LexicalAnalyzer.Test.csproj", "{4C06845D-98CB-4585-80F5-053533D69C0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalyzerConsole", "LexicalAnalyzerConsole\LexicalAnalyzerConsole.csproj", "{6C447493-9794-42AE-AE6A-02697952AD79}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{4C06845D-98CB-4585-80F5-053533D69C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C06845D-98CB-4585-80F5-053533D69C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C06845D-98CB-4585-80F5-053533D69C0D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C447493-9794-42AE-AE6A-02697952AD79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C447493-9794-42AE-AE6A-02697952AD79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C447493-9794-42AE-AE6A-02697952AD79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C447493-9794-42AE-AE6A-02697952AD79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
