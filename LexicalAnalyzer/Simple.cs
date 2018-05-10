@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace LexicalAnalyzer
@@ -34,6 +35,17 @@ namespace LexicalAnalyzer
                 RuleIdx = 0;
                 Tree = null;
                 Pc = 0;
+            }
+
+            public CallingStackFrame(CallingStackFrame that)
+            {
+                this.Tree = that.Tree;
+                this.ChildIdx = that.ChildIdx;
+                this.Current = that.Current;
+                this.Pc = that.Pc;
+                this.Result = that.Result;
+                this.RuleIdx = that.RuleIdx;
+                this.StartIdx = that.StartIdx;
             }
 
             #region 函数参数
@@ -126,13 +138,9 @@ namespace LexicalAnalyzer
         /// </summary>
         private void SaveCurrentContinuation()
         {
-            var snapshot = JsonConvert.SerializeObject(
-                _callingStack,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All,
-                });
-            _callingStackSnapshots.Push(snapshot);
+            // 获得的顺序是相反的，必须 reverse 一次
+            var snapshot = _callingStack.Select(item => new CallingStackFrame(item)).Reverse();
+            _callingStackSnapshots.Push(new Stack<CallingStackFrame>(snapshot));
         }
 
         /// <summary>
@@ -146,14 +154,7 @@ namespace LexicalAnalyzer
                 return false;
             }
 
-            var snapshot = _callingStackSnapshots.Pop();
-            _callingStack = JsonConvert.DeserializeObject<Stack<CallingStackFrame>>(
-                snapshot,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All,
-                });
-
+            _callingStack = _callingStackSnapshots.Pop();
             var frame = _callingStack.Peek();
             ++frame.RuleIdx;
             frame.Pc = 1;
@@ -178,7 +179,7 @@ namespace LexicalAnalyzer
 
         private List<Rule> _rules;
         private Stack<CallingStackFrame> _callingStack;
-        private Stack<string> _callingStackSnapshots;
+        private Stack<Stack<CallingStackFrame>> _callingStackSnapshots;
         private string _buffer;
 
         public Simple()
@@ -195,7 +196,7 @@ namespace LexicalAnalyzer
         private void ResetStack()
         {
             _callingStack = new Stack<CallingStackFrame>();
-            _callingStackSnapshots = new Stack<string>();
+            _callingStackSnapshots = new Stack<Stack<CallingStackFrame>>();
         }
 
         /// <summary>
@@ -214,10 +215,6 @@ namespace LexicalAnalyzer
 
             do
             {
-                root = _callingStack.Peek().Tree ?? _callingStack.Peek().Current as TreeNode;
-                // 从 json 恢复之后这两个对象就失去联系了
-                _callingStack.Peek().Current = root;
-
                 var success = ExecuteAndGetResult();
 
                 if (success)
