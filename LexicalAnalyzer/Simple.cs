@@ -33,6 +33,8 @@ namespace LexicalAnalyzer
 
         public int ChildIdx { get; set; }
 
+        public int CurrentBufferIdx { get; set; }
+
         /// <summary>
         /// 在复制时不对 Tree 进行深拷贝，而是直接复制引用，便于在恢复续延时对相同的对象保持引用
         /// </summary>
@@ -43,6 +45,7 @@ namespace LexicalAnalyzer
                 ChildIdx = ChildIdx,
                 Tree = Tree,
                 RuleIdx = RuleIdx,
+                CurrentBufferIdx = CurrentBufferIdx,
             };
         }
     }
@@ -59,7 +62,7 @@ namespace LexicalAnalyzer
     ///
     /// 如果不能解析语法树，返回 null
     /// </summary>
-    public class Simple : StackMachine<SimpleParam, SimpleVariable, bool>
+    public class Simple : StackMachine<SimpleParam, SimpleVariable, int>
     {
         /// <summary>
         /// 分析token序列，生成语法树（这里假设一个char是一个 token）
@@ -73,8 +76,9 @@ namespace LexicalAnalyzer
             // 起始节点
             var root = new TreeNode { Token = 'S' };
 
-            var success = function.Run(new SimpleParam { Current = root, StartIdx = 0 });
-            while (!success)
+            // 函数的返回值代表从 startIdx 前进了几步，便于后续的计算。如果返回 -1，代表解析错误
+            var scannedLength = function.Run(new SimpleParam { Current = root, StartIdx = 0 });
+            while (scannedLength == -1)
             {
                 if (function._backtracings.Count == 0)
                 {
@@ -82,7 +86,13 @@ namespace LexicalAnalyzer
                 }
 
                 var continuation = function._backtracings.Pop();
-                success = function.ResumeAtContinuation(continuation, true);
+                scannedLength = function.ResumeAtContinuation(continuation, true);
+            }
+
+            if (scannedLength != buffer.Length)
+            {
+                // 没读到结尾就返回了，说明语法树不匹配
+                return null;
             }
 
             Debug.Assert(root != null, "最后返回处的语法树应该为 TreeNode");
@@ -121,11 +131,13 @@ namespace LexicalAnalyzer
             _backtracings = new Stack<Continuation>();
         }
 
+        // return: int - 下一个要扫描的 token
+        // params: 参考 SimpleParam
         protected override bool StepMove(
             SimpleParam p,
             SimpleVariable v,
             int pc,
-            bool lastReturned,
+            int lastReturned,
             object callCCReturned)
         {
             // 根据程序计数器决定执行哪一段代码
@@ -136,8 +148,16 @@ namespace LexicalAnalyzer
                     // 使用花括号来避免在多个 case 之间共享状态
                     if (p.Current is TreeLeaf leaf)
                     {
-                        // 根据语法树，当前应当是终结符号
-                        return Return(_buffer[p.StartIdx] == leaf.Token);
+                        if (p.StartIdx >= _buffer.Length)
+                        {
+                            // 超过 buffer 长度了，代表当前的规则不匹配
+                            return Return(-1);
+                        }
+                        else
+                        {
+                            // 根据语法树，当前应当是终结符号
+                            return Return(_buffer[p.StartIdx] == leaf.Token ? p.StartIdx + 1 : -1);
+                        }
                     }
 
                     // 确保语法树的当前节点是 非终结符
@@ -145,7 +165,7 @@ namespace LexicalAnalyzer
                     v.Tree = p.Current as TreeNode;
                     if (v.Tree == null)
                     {
-                        return Return(false);
+                        return Return(-1);
                     }
 
                     // 开始循环(入口点 1)
@@ -168,7 +188,7 @@ namespace LexicalAnalyzer
                         }
                     }
 
-                    return Return(false);
+                    return Return(-1);
                 }
                 case 2:
                 {
@@ -181,7 +201,7 @@ namespace LexicalAnalyzer
                 }
                 case 3:
                 {
-                    var shouldSkipTheRule = (bool) callCCReturned;
+                    var shouldSkipTheRule = (bool)callCCReturned;
                     if (shouldSkipTheRule)
                     {
                         ++v.RuleIdx;
@@ -205,6 +225,7 @@ namespace LexicalAnalyzer
 
                     // 开始循环(入口点 4)
                     v.ChildIdx = 0;
+                    v.CurrentBufferIdx = p.StartIdx;
 
                     return Continue();
                 }
@@ -214,24 +235,25 @@ namespace LexicalAnalyzer
                     if (v.ChildIdx >= v.Tree.Children.Count)
                     {
                         // 检查完了所有子节点
-                        return Return(true);
+                        return Return(v.CurrentBufferIdx);
                     }
 
                     return RecursiveCall(new SimpleParam
                     {
                         Current = v.Tree.Children[v.ChildIdx],
-                        StartIdx = p.StartIdx + v.ChildIdx,
+                        StartIdx = v.CurrentBufferIdx,
                     });
                 }
                 case 5:
                 {
-                    var success = lastReturned;
-                    if (!success)
+                    var newBufferIdx = lastReturned;
+                    if (newBufferIdx == -1)
                     {
-                        return Return(false);
+                        return Return(-1);
                     }
 
                     ++v.ChildIdx;
+                    v.CurrentBufferIdx = newBufferIdx;
 
                     // 这里没法用循环，只能用 goto 了。
                     return GoTo(4);
