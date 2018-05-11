@@ -30,6 +30,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
                 }),
                 // commentBody
             });
+            commentBody.NextStates.Add(commentBody);
 
             _nameWithCommentState = AutomataTokenizerState.ForBegin(new List<AutomataTokenizerState>
             {

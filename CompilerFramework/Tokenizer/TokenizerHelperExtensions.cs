@@ -14,7 +14,7 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// <returns></returns>
         public static Func<char, bool> MatchCurrentPosition(this char c)
         {
-            return it => it == 'c';
+            return it => it == c;
         }
     }
 }
