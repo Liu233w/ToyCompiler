@@ -44,7 +44,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         }
 
         [Fact]
-        public void 应该能够识别名字()
+        public void GetByAutomata_应该能够识别名字()
         {
             var res = AutomataTokenizer.GetByAutomata(_nameState, "name1", 0, out var end);
 
@@ -53,7 +53,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         }
 
         [Fact]
-        public void 不能识别的时候应该抛出异常()
+        public void GetByAutomata_不能识别的时候应该抛出异常()
         {
             var exception =
                 Should.Throw<WrongTokenException>(() =>
@@ -66,7 +66,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         }
 
         [Fact]
-        public void 可以识别目前识别的子串()
+        public void GetByAutomata_可以识别目前识别的子串()
         {
             var res = AutomataTokenizer.GetByAutomata(_nameState, "name1.1", 0, out var end);
 
@@ -75,7 +75,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         }
 
         [Fact]
-        public void 能够识别单个字符作为的名字()
+        public void GetByAutomata_能够识别单个字符作为的名字()
         {
             var res = AutomataTokenizer.GetByAutomata(_nameState, "a", 0, out var end);
 
@@ -84,7 +84,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         }
 
         [Fact]
-        public void 在包含多个终止状态时能够正确识别_name在前()
+        public void GetByAutomata_在包含多个终止状态时能够正确识别_name在前()
         {
             const string buffer = "aaa/*asddg*/";
 
@@ -98,7 +98,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         }
 
         [Fact]
-        public void 在包含多个终止状态时能够正确识别_comment在前()
+        public void GetByAutomata_在包含多个终止状态时能够正确识别_comment在前()
         {
             const string buffer = "/*asddg*/aaa";
 
