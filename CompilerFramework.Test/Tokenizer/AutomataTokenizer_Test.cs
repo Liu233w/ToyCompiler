@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 using Shouldly;
@@ -22,26 +23,36 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
                 AutomataTokenizerState.ForEnd(char.IsLetter, "name", new List<AutomataTokenizerState>{nameEndState}),
             });
 
-            var commentBody = AutomataTokenizerState.ForMiddle(c => true, new List<AutomataTokenizerState>
-            {
-                AutomataTokenizerState.ForMiddle('*'.MatchCurrentPosition(), new List<AutomataTokenizerState>
+            var commentEnd = AutomataTokenizerState.ForMiddle('*'.MatchCurrentPosition(),
+                new List<AutomataTokenizerState>
                 {
                     AutomataTokenizerState.ForEnd('/'.MatchCurrentPosition(), "comment"),
-                }),
+                });
+
+            var commentBody = AutomataTokenizerState.ForMiddle(c => true, new List<AutomataTokenizerState>
+            {
+                commentEnd,
                 // commentBody
             });
             commentBody.NextStates.Add(commentBody);
 
             _nameWithCommentState = AutomataTokenizerState.ForBegin(new List<AutomataTokenizerState>
             {
-                AutomataTokenizerState.ForMiddle(char.IsLetter, new List<AutomataTokenizerState> {nameEndState}),
+                AutomataTokenizerState.ForEnd(char.IsLetter, "name", new List<AutomataTokenizerState> {nameEndState}),
                 AutomataTokenizerState.ForMiddle('/'.MatchCurrentPosition(), new List<AutomataTokenizerState>
                 {
                     AutomataTokenizerState.ForMiddle('*'.MatchCurrentPosition(),
-                        new List<AutomataTokenizerState> {commentBody}),
+                        new List<AutomataTokenizerState>
+                        {
+                            // 状态机是按顺序遍历的，将 body 放在前面也能正常运行，但是放在后面效率比较高（End要判断的步骤少）
+                            commentEnd,
+                            commentBody,
+                        }),
                 })
             });
         }
+
+        #region GetByAutomata
 
         [Fact]
         public void GetByAutomata_应该能够识别名字()
@@ -110,5 +121,26 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
             res.ShouldMatchObject(new Token("aaa", "name", 9, 12));
             end.ShouldBe(12);
         }
+
+        [Fact]
+        public void GetByAutomata_在包含多个终止状态时能够正确识别_夹心()
+        {
+            const string buffer = "aaa/*asddg*/bbb";
+
+            var res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, 0, out var end);
+            res.ShouldMatchObject(new Token("aaa", "name", 0, 3));
+            end.ShouldBe(3);
+
+            res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, end, out end);
+            res.ShouldMatchObject(new Token("/*asddg*/", "comment", 3, 12));
+            end.ShouldBe(12);
+
+            res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, end, out end);
+            res.ShouldMatchObject(new Token("bbb", "name", 12, 15));
+            end.ShouldBe(15);
+        }
+
+        #endregion
+
     }
 }
