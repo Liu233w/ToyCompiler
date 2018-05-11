@@ -142,5 +142,45 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
 
         #endregion
 
+        #region GetAllTokenByAutomata
+
+        [Fact]
+        public void GetAllTokenByAutomata_能够获取Token流()
+        {
+            var res = AutomataTokenizer.GetAllTokenByAutomata(_nameWithCommentState, "/*aaaaa*/abc");
+
+            res.ToArray().ShouldMatchObject(new Token[]
+            {
+                new Token("/*aaaaa*/", "comment", 0, 9),
+                new Token("abc", "name", 9, 12),
+            });
+        }
+
+        [Fact]
+        public void GetAllTokenByAutomata_能够获取到大段文字的Token流()
+        {
+            var whiteSpace = AutomataTokenizerState.ForEnd(' '.MatchCurrentPosition(), "space");
+            whiteSpace.NextStates.Add(whiteSpace);
+
+            _nameWithCommentState.NextStates.Add(whiteSpace);
+
+            const string buffer = "abc def ggg /*fdsafdsf  fff  */ llll a/**/a ";
+            var res = AutomataTokenizer.GetAllTokenByAutomata(_nameWithCommentState, buffer);
+
+            var enumerable = res as Token[] ?? res.ToArray();
+            enumerable.Select(item => item.TokenType).ToArray().ShouldMatchObject(new[]
+            {
+                "name", "space", "name", "space", "name", "space",
+                "comment", "space", "name", "space", "name",
+                "comment", "name", "space",
+            });
+            enumerable.Select(item => item.Content).ToArray().ShouldMatchObject(new[]
+            {
+                "abc", " ", "def", " ", "ggg", " ", "/*fdsafdsf  fff  */",
+                " ", "llll", " ", "a", "/**/", "a", " ",
+            });
+        }
+
+        #endregion
     }
 }

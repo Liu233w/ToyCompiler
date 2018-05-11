@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 
@@ -9,6 +10,24 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
     /// </summary>
     public static class AutomataTokenizer
     {
+        /// <summary>
+        /// 使用指定的状态机来遍历源代码字符串，获取语法单元
+        /// </summary>
+        /// <param name="automataState"></param>
+        /// <param name="buffer"></param>
+        /// <param name="beginIdx">起始位置</param>
+        /// <returns>语法单元的可遍历形式</returns>
+        /// <exception cref="TokenizerException"></exception>
+        /// <exception cref="WrongTokenException">无法解析当前语法单元时抛出</exception>
+        public static IEnumerable<Token> GetAllTokenByAutomata(AutomataTokenizerState automataState, string buffer,
+            int beginIdx = 0)
+        {
+            while (beginIdx < buffer.Length)
+            {
+                yield return GetByAutomata(automataState, buffer, beginIdx, out beginIdx);
+            }
+        }
+
         /// <summary>
         /// 使用有限状态机对源代码进行分割，得到语法单元。
         /// 如果某一个节点能够到达多个匹配当前字符的节点，会按照 <see cref="AutomataTokenizerState.NextStates"/> 中的顺序进行遍历。
