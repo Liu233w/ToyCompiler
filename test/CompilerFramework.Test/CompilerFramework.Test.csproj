@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CompilerFramework\CompilerFramework.csproj" />
+    <ProjectReference Include="..\..\src\CompilerFramework\CompilerFramework.csproj" />
   </ItemGroup>
 
 </Project>
