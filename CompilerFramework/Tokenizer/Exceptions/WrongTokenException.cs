@@ -2,10 +2,11 @@ using System;
 
 namespace Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions
 {
+    /// <inheritdoc />
     /// <summary>
     /// 在 Tokenizer 无法识别 Token 时抛出此异常
     /// </summary>
-    public class WrongTokenException : Exception
+    public class WrongTokenException : TokenizerException
     {
         public string Buffer { get; set; }
         

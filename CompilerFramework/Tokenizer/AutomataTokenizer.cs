@@ -16,11 +16,18 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// <param name="automataState">使用的有限状态机</param>
         /// <param name="buffer">要遍历的字符串</param>
         /// <param name="beginIdx">本语法单元的起点</param>
-        /// <param name="nextBeginIdx">下一个语法单元的起点</param>
+        /// <param name="nextBeginIdx">返回下一个语法单元的起点</param>
         /// <returns>如果能够读取，返回读到的语法单元。否则返回 null</returns>
+        /// <exception cref="TokenizerException"></exception>
+        /// <exception cref="WrongTokenException">无法解析当前语法单元时抛出</exception>
         public static Token GetByAutomata(AutomataTokenizerState automataState, string buffer, int beginIdx,
             out int nextBeginIdx)
         {
+            if (automataState.StateType != AutomataTokenizerStateType.BeginState)
+            {
+                throw new TokenizerException($"{nameof(automataState)} 必须是起始状态");
+            }
+
             nextBeginIdx = WalkBuffer(buffer, beginIdx, automataState, out var endState);
 
             if (endState.StateType == AutomataTokenizerStateType.EndState)
