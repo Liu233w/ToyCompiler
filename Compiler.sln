@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tokenizer", "Tokenizer\Tokenizer.csproj", "{C6C8FA28-AFDC-4F28-ADE2-DF0F1033948B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tokenizer.Test", "Tokenizer.Test\Tokenizer.Test.csproj", "{72946342-27F7-4D17-80A0-16109D2EFA1B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexicalAnalyzer", "LexicalAnalyzer\LexicalAnalyzer.csproj", "{60336AD7-D0A6-412A-A569-6446E976101F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexicalAnalyzer.Test", "LexicalAnalyzer.Test\LexicalAnalyzer.Test.csproj", "{4C06845D-98CB-4585-80F5-053533D69C0D}"
@@ -21,11 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompilerFramework.Test", "t
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Experiments", "Experiments", "{FC420D72-0BE7-4443-9A1B-C7FB7AB37E96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EX1", "src\Experiments\EX1\EX1.csproj", "{5CFB26F6-0196-4957-AAD4-9C3AEC2A24F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EX1", "src\Experiments\EX1\EX1.csproj", "{5CFB26F6-0196-4957-AAD4-9C3AEC2A24F4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Experiments", "Experiments", "{41B5CAFE-125A-44EB-854A-963E5B86ED3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EX1.Test", "test\Experiments\EX1.Test\EX1.Test.csproj", "{3FACC4F2-D0F7-4223-969C-4EF6E76FF785}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EX1.Test", "test\Experiments\EX1.Test\EX1.Test.csproj", "{3FACC4F2-D0F7-4223-969C-4EF6E76FF785}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,14 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C6C8FA28-AFDC-4F28-ADE2-DF0F1033948B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C6C8FA28-AFDC-4F28-ADE2-DF0F1033948B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C6C8FA28-AFDC-4F28-ADE2-DF0F1033948B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C6C8FA28-AFDC-4F28-ADE2-DF0F1033948B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72946342-27F7-4D17-80A0-16109D2EFA1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72946342-27F7-4D17-80A0-16109D2EFA1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72946342-27F7-4D17-80A0-16109D2EFA1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72946342-27F7-4D17-80A0-16109D2EFA1B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60336AD7-D0A6-412A-A569-6446E976101F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60336AD7-D0A6-412A-A569-6446E976101F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60336AD7-D0A6-412A-A569-6446E976101F}.Release|Any CPU.ActiveCfg = Release|Any CPU
