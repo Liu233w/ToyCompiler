@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
-using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 using Shouldly;
 using Xunit;
 
 namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
 {
+    // ReSharper disable once InconsistentNaming
     public class AutomataTokenizer_Test
     {
         private readonly AutomataTokenizerState _nameState;
@@ -187,7 +187,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         {
             var res = AutomataTokenizer.GetAllTokenByAutomata(_nameWithCommentState, "/*aaaaa*/abc");
 
-            res.Rights().ToArray().ShouldMatchObject(new Token[]
+            res.Rights().ToArray().ShouldMatchObject(new[]
             {
                 new Token("/*aaaaa*/", "comment", 0, 9),
                 new Token("abc", "name", 9, 12),

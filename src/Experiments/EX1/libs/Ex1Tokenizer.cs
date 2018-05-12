@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using LanguageExt;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
-using Liu233w.Compiler.EX1.libs;
 
-namespace Liu233w.Compiler.EX1
+namespace Liu233w.Compiler.EX1.libs
 {
     /// <summary>
     /// 用于Ex1的词法分析器

@@ -1,5 +1,3 @@
-using System;
-
 namespace Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions
 {
     /// <inheritdoc />

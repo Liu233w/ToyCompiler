@@ -1,7 +1,5 @@
 using System;
 using LanguageExt;
-using Liu233w.Compiler.CompilerFramework.Tokenizer;
-using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 using Newtonsoft.Json;
 using Shouldly;
 
@@ -23,7 +21,9 @@ namespace Liu233w.Compiler.CompilerFramework.Test
             obj.ToJsonString().ShouldBe(that.ToJsonString());
         }
 
+        // ReSharper disable InconsistentNaming
         public static void ShouldBeLeft<L, R>(this Either<L, R> self, Action<L> action)
+        // ReSharper restore InconsistentNaming
         {
             self.Match(
                 Right: _ => throw new ShouldAssertException("Either: Expect Left"),
@@ -31,7 +31,9 @@ namespace Liu233w.Compiler.CompilerFramework.Test
             );
         }
 
+        // ReSharper disable InconsistentNaming
         public static void ShouldBeRight<L, R>(this Either<L, R> self, Action<R> action)
+        // ReSharper restore InconsistentNaming
         {
             self.Match(
                 Right: action,
@@ -39,12 +41,16 @@ namespace Liu233w.Compiler.CompilerFramework.Test
             );
         }
 
+        // ReSharper disable InconsistentNaming
         public static void ShouldMatchRight<L, R>(this Either<L, R> self, R right)
+        // ReSharper restore InconsistentNaming
         {
             self.ShouldBeRight(res => res.ShouldMatchObject(right));
         }
 
+        // ReSharper disable InconsistentNaming
         public static void ShouldMatchLeft<L, R>(this Either<L, R> self, L left)
+        // ReSharper restore InconsistentNaming
         {
             self.ShouldBeLeft(res => res.ShouldMatchObject(left));
         }
