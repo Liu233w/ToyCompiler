@@ -10,15 +10,15 @@ namespace Liu233w.Compiler.CompilerFramework.Test
     /// </summary>
     public static class TestHelperExtensions
     {
-        public static string ToJsonString(this object obj)
+        public static string ToJsonString(this object obj, TypeNameHandling handling = TypeNameHandling.All)
         {
             return JsonConvert.SerializeObject(obj,
-                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+                new JsonSerializerSettings { TypeNameHandling = handling });
         }
 
-        public static void ShouldMatchObject(this object obj, object that)
+        public static void ShouldMatchObject(this object obj, object that, TypeNameHandling handling = TypeNameHandling.All)
         {
-            obj.ToJsonString().ShouldBe(that.ToJsonString());
+            obj.ToJsonString(handling).ShouldBe(that.ToJsonString(handling));
         }
 
         // ReSharper disable InconsistentNaming

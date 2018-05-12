@@ -8,10 +8,20 @@ namespace Liu233w.Compiler.EX1.libs
 {
     public static class Ex1Tokenizer
     {
+        public static Either<List<WrongTokenException>, List<Token>> TokenizeBuffer(string buffer)
+        {
+            return AutomataTokenizer.GetAllTokenByAutomata(Ex1Automata.ForBegin, buffer)
+                .Seprate()
+                .Match<Either<List<WrongTokenException>, List<Token>>>(
+                    Right: r => ConvertSymbolToIdentifiers(r.ExcludeTokenType(Ex1Automata.SpaceToken)).ToList(),
+                    Left: l => l
+                );
+        }
+
         /// <summary>
         /// 需要进行转换的关键字
         /// </summary>
-        public static System.Collections.Generic.HashSet<string> GetSymbolConvertSet() => new System.Collections.Generic.HashSet<string>
+        private static System.Collections.Generic.HashSet<string> GetSymbolConvertSet() => new System.Collections.Generic.HashSet<string>
         {
             TokenTypes.Thread,
             TokenTypes.Features,
@@ -38,7 +48,7 @@ namespace Liu233w.Compiler.EX1.libs
         /// </summary>
         /// <param name="tokens"></param>
         /// <returns></returns>
-        public static IEnumerable<Token> ConvertSymbolToIdentifiers(IEnumerable<Token> tokens)
+        private static IEnumerable<Token> ConvertSymbolToIdentifiers(IEnumerable<Token> tokens)
         {
             var set = GetSymbolConvertSet();
             foreach (var token in tokens)
@@ -49,16 +59,6 @@ namespace Liu233w.Compiler.EX1.libs
                 }
                 yield return token;
             }
-        }
-
-        public static Either<List<WrongTokenException>, List<Token>> TokenizeBuffer(string buffer)
-        {
-            return AutomataTokenizer.GetAllTokenByAutomata(Ex1Automata.ForBegin, buffer)
-                .Seprate()
-                .Match<Either<List<WrongTokenException>, List<Token>>>(
-                    Right: r => ConvertSymbolToIdentifiers(r.ExcludeTokenType(Ex1Automata.SpaceToken)).ToList(),
-                    Left: l => l
-                );
         }
     }
 }
