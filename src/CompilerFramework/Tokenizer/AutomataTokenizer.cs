@@ -61,7 +61,13 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
             }
             else
             {
-                return new WrongTokenException($"在 {nextBeginIdx} 处有无法识别的字符 {buffer[nextBeginIdx]}", buffer, beginIdx, nextBeginIdx, endState);
+                var exception = new WrongTokenException($"在 {nextBeginIdx} 处有无法识别的字符 {buffer[nextBeginIdx]}", buffer,
+                    beginIdx, nextBeginIdx, endState);
+
+                if (nextBeginIdx == beginIdx)
+                    ++nextBeginIdx;
+
+                return exception;
             }
         }
 

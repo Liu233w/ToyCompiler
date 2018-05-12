@@ -79,7 +79,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         [Fact]
         public void GetByAutomata_不能识别的时候应返回异常()
         {
-            AutomataTokenizer.GetByAutomata(_nameState, "123", 0, out _)
+            AutomataTokenizer.GetByAutomata(_nameState, "123", 0, out var nextBeginIdx)
                 .ShouldBeLeft(exception =>
                 {
                     exception.Buffer.ShouldBe("123");
@@ -87,6 +87,8 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
                     exception.CurrentIdx.ShouldBe(0);
                     exception.CurrentState.ShouldBe(_nameState);
                 });
+
+            nextBeginIdx.ShouldBe(1);
         }
 
         [Fact]
@@ -108,10 +110,10 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         }
 
         [Theory]
-        [InlineData("a", 0, 0)]
-        [InlineData("1a", 1, '1')]
-        [InlineData("12a", 2, '2')]
-        public void GetByAutomata_在无法识别时能够返回含有终点位置的异常(string buffer, int expectEndAt, char expectStateAt)
+        [InlineData("a", 0, 1, 0)]
+        [InlineData("1a", 1, 1, '1')]
+        [InlineData("12a", 2, 2, '2')]
+        public void GetByAutomata_在无法识别时能够返回含有终点位置的异常(string buffer, int expectEndAt, int expectNextBegin, char expectStateAt)
         {
             // 使用有限状态机进行遍历不应该有回溯操作，所以这里应该直接返回已经识别的Token
             AutomataTokenizer.GetByAutomata(_certainState, buffer, 0, out var nextBeginIdx)
@@ -129,7 +131,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
                     }
                 });
 
-            nextBeginIdx.ShouldBe(expectEndAt);
+            nextBeginIdx.ShouldBe(expectNextBegin);
         }
 
         [Fact]
@@ -216,6 +218,28 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
             {
                 "abc", " ", "def", " ", "ggg", " ", "/*fdsafdsf  fff  */",
                 " ", "llll", " ", "a", "/**/", "a", " ",
+            });
+        }
+
+        [Fact]
+        public void GetAllTokenByAutomata_能够获取所有的错误信息()
+        {
+            const string buffer = ".name/*asdf";
+
+            var res = AutomataTokenizer.GetAllTokenByAutomata(_nameWithCommentState, buffer).ToArray();
+
+            res.Seprate().ShouldBeLeft(l => l.Count.ShouldBe(2));
+
+            res[0].ShouldBeLeft(l =>
+            {
+                l.TokenBegin.ShouldBe(0);
+                l.CurrentIdx.ShouldBe(0);
+            });
+            res[1].ShouldMatchRight(new Token("name", "name", 1, 5));
+            res[2].ShouldBeLeft(l =>
+            {
+                l.TokenBegin.ShouldBe(5);
+                l.CurrentIdx.ShouldBe(11);
             });
         }
 
