@@ -72,38 +72,38 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         {
             var res = AutomataTokenizer.GetByAutomata(_nameState, "name1", 0, out var end);
 
-            res.ShouldMatchObject(new Token("name1", "name", 0, 5));
+            res.ShouldMatchRight(new Token("name1", "name", 0, 5));
             end.ShouldBe(5);
         }
 
         [Fact]
-        public void GetByAutomata_不能识别的时候应该抛出异常()
+        public void GetByAutomata_不能识别的时候应返回异常()
         {
-            var exception =
-                Should.Throw<WrongTokenException>(() =>
-                    AutomataTokenizer.GetByAutomata(_nameState, "123", 0, out _));
-
-            exception.Buffer.ShouldBe("123");
-            exception.TokenBegin.ShouldBe(0);
-            exception.CurrentIdx.ShouldBe(0);
-            exception.CurrentState.ShouldBe(_nameState);
+            AutomataTokenizer.GetByAutomata(_nameState, "123", 0, out _)
+                .ShouldBeLeft(exception =>
+                {
+                    exception.Buffer.ShouldBe("123");
+                    exception.TokenBegin.ShouldBe(0);
+                    exception.CurrentIdx.ShouldBe(0);
+                    exception.CurrentState.ShouldBe(_nameState);
+                });
         }
 
         [Fact]
         public void GetByAutomata_可以识别目前识别的子串()
         {
-            var res = AutomataTokenizer.GetByAutomata(_nameState, "name1.1", 0, out var end);
+            AutomataTokenizer.GetByAutomata(_nameState, "name1.1", 0, out var end)
+                .ShouldMatchRight(new Token("name1", "name", 0, 5));
 
-            res.ShouldMatchObject(new Token("name1", "name", 0, 5));
             end.ShouldBe(5);
         }
 
         [Fact]
         public void GetByAutomata_能够识别单个字符作为的名字()
         {
-            var res = AutomataTokenizer.GetByAutomata(_nameState, "a", 0, out var end);
+            AutomataTokenizer.GetByAutomata(_nameState, "a", 0, out var end)
+                .ShouldMatchRight(new Token("a", "name", 0, 1));
 
-            res.ShouldMatchObject(new Token("a", "name", 0, 1));
             end.ShouldBe(1);
         }
 
@@ -111,25 +111,25 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         [InlineData("a", 0, 0)]
         [InlineData("1a", 1, '1')]
         [InlineData("12a", 2, '2')]
-        public void GetByAutomata_在无法识别时能够抛出含有终点位置的异常(string buffer, int expectEndAt, char expectStateAt)
+        public void GetByAutomata_在无法识别时能够返回含有终点位置的异常(string buffer, int expectEndAt, char expectStateAt)
         {
             // 使用有限状态机进行遍历不应该有回溯操作，所以这里应该直接返回已经识别的Token
-            int nextBeginIdx = -1;
-            var exception =
-                Should.Throw<WrongTokenException>(
-                    () => AutomataTokenizer.GetByAutomata(_certainState, buffer, 0, out nextBeginIdx));
+            AutomataTokenizer.GetByAutomata(_certainState, buffer, 0, out var nextBeginIdx)
+                .ShouldBeLeft(exception =>
+                {
+                    exception.CurrentIdx.ShouldBe(expectEndAt);
+                    exception.TokenBegin.ShouldBe(0);
+                    if (expectStateAt == 0)
+                    {
+                        exception.CurrentState.Asserter.ShouldBeNull();
+                    }
+                    else
+                    {
+                        exception.CurrentState.Asserter(expectStateAt).ShouldBeTrue();
+                    }
+                });
 
             nextBeginIdx.ShouldBe(expectEndAt);
-            exception.CurrentIdx.ShouldBe(expectEndAt);
-            exception.TokenBegin.ShouldBe(0);
-            if (expectStateAt == 0)
-            {
-                exception.CurrentState.Asserter.ShouldBeNull();
-            }
-            else
-            {
-                exception.CurrentState.Asserter(expectStateAt).ShouldBeTrue();
-            }
         }
 
         [Fact]
@@ -138,11 +138,11 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
             const string buffer = "aaa/*asddg*/";
 
             var res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, 0, out var end);
-            res.ShouldMatchObject(new Token("aaa", "name", 0, 3));
+            res.ShouldMatchRight(new Token("aaa", "name", 0, 3));
             end.ShouldBe(3);
 
             res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, end, out end);
-            res.ShouldMatchObject(new Token("/*asddg*/", "comment", 3, 12));
+            res.ShouldMatchRight(new Token("/*asddg*/", "comment", 3, 12));
             end.ShouldBe(12);
         }
 
@@ -152,11 +152,11 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
             const string buffer = "/*asddg*/aaa";
 
             var res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, 0, out var end);
-            res.ShouldMatchObject(new Token("/*asddg*/", "comment", 0, 9));
+            res.ShouldMatchRight(new Token("/*asddg*/", "comment", 0, 9));
             end.ShouldBe(9);
 
             res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, end, out end);
-            res.ShouldMatchObject(new Token("aaa", "name", 9, 12));
+            res.ShouldMatchRight(new Token("aaa", "name", 9, 12));
             end.ShouldBe(12);
         }
 
@@ -166,15 +166,15 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
             const string buffer = "aaa/*asddg*/bbb";
 
             var res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, 0, out var end);
-            res.ShouldMatchObject(new Token("aaa", "name", 0, 3));
+            res.ShouldMatchRight(new Token("aaa", "name", 0, 3));
             end.ShouldBe(3);
 
             res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, end, out end);
-            res.ShouldMatchObject(new Token("/*asddg*/", "comment", 3, 12));
+            res.ShouldMatchRight(new Token("/*asddg*/", "comment", 3, 12));
             end.ShouldBe(12);
 
             res = AutomataTokenizer.GetByAutomata(_nameWithCommentState, buffer, end, out end);
-            res.ShouldMatchObject(new Token("bbb", "name", 12, 15));
+            res.ShouldMatchRight(new Token("bbb", "name", 12, 15));
             end.ShouldBe(15);
         }
 
@@ -187,7 +187,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
         {
             var res = AutomataTokenizer.GetAllTokenByAutomata(_nameWithCommentState, "/*aaaaa*/abc");
 
-            res.ToArray().ShouldMatchObject(new Token[]
+            res.Rights().ToArray().ShouldMatchObject(new Token[]
             {
                 new Token("/*aaaaa*/", "comment", 0, 9),
                 new Token("abc", "name", 9, 12),
@@ -203,7 +203,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
             _nameWithCommentState.NextStates.Add(whiteSpace);
 
             const string buffer = "abc def ggg /*fdsafdsf  fff  */ llll a/**/a ";
-            var res = AutomataTokenizer.GetAllTokenByAutomata(_nameWithCommentState, buffer);
+            var res = AutomataTokenizer.GetAllTokenByAutomata(_nameWithCommentState, buffer).Rights();
 
             var enumerable = res as Token[] ?? res.ToArray();
             enumerable.Select(item => item.TokenType).ToArray().ShouldMatchObject(new[]

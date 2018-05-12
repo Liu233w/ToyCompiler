@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using LanguageExt;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 
 namespace Liu233w.Compiler.CompilerFramework.Tokenizer
@@ -19,7 +20,7 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// <returns>语法单元的可遍历形式</returns>
         /// <exception cref="TokenizerException"></exception>
         /// <exception cref="WrongTokenException">无法解析当前语法单元时抛出</exception>
-        public static IEnumerable<Token> GetAllTokenByAutomata(AutomataTokenizerState automataState, string buffer,
+        public static IEnumerable<Either<WrongTokenException, Token>> GetAllTokenByAutomata(AutomataTokenizerState automataState, string buffer,
             int beginIdx = 0)
         {
             while (beginIdx < buffer.Length)
@@ -39,7 +40,7 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// <returns>返回读到的最后一个语法单元。如果正常终止，其类型应但是 EndType，否则是不正确的语法</returns>
         /// <exception cref="TokenizerException"></exception>
         /// <exception cref="WrongTokenException">无法解析当前语法单元时抛出</exception>
-        public static Token GetByAutomata(AutomataTokenizerState automataState, string buffer, int beginIdx,
+        public static Either<WrongTokenException, Token> GetByAutomata(AutomataTokenizerState automataState, string buffer, int beginIdx,
             out int nextBeginIdx)
         {
             if (automataState.StateType != AutomataTokenizerStateType.BeginState)
@@ -58,11 +59,11 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
             // 没有到达终止节点
             if (nextBeginIdx >= buffer.Length)
             {
-                throw new WrongTokenException("无法识别不完整的源代码", buffer, beginIdx, nextBeginIdx, endState);
+                return new WrongTokenException("无法识别不完整的源代码", buffer, beginIdx, nextBeginIdx, endState);
             }
             else
             {
-                throw new WrongTokenException($"在 {nextBeginIdx} 处有无法识别的字符 {buffer[nextBeginIdx]}", buffer, beginIdx, nextBeginIdx, endState);
+                return new WrongTokenException($"在 {nextBeginIdx} 处有无法识别的字符 {buffer[nextBeginIdx]}", buffer, beginIdx, nextBeginIdx, endState);
             }
         }
 

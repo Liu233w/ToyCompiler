@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\CompilerFramework\CompilerFramework.csproj" />
     <ProjectReference Include="..\..\..\src\Experiments\EX1\EX1.csproj" />
+    <ProjectReference Include="..\..\CompilerFramework.Test\CompilerFramework.Test.csproj" />
   </ItemGroup>
 
 </Project>

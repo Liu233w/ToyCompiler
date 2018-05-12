@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExt;
+using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 
 namespace Liu233w.Compiler.CompilerFramework.Tokenizer
 {
@@ -28,6 +30,27 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         public static IEnumerable<Token> ExcludeTokenType(this IEnumerable<Token> tokens, string tokenType)
         {
             return tokens.Where(token => token.TokenType != tokenType);
+        }
+
+        /// <summary>
+        /// 将 Token 流分成两部分，分别表示无法识别的语法单元和能够识别的语法单元
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        public static Either<List<WrongTokenException>, List<Token>> Seprate(
+            this IEnumerable<Either<WrongTokenException, Token>> self)
+        {
+            var enumerable = self.ToList();
+
+            var errors = enumerable.Lefts().ToList();
+            if (errors.Count > 0)
+            {
+                return errors;
+            }
+            else
+            {
+                return enumerable.Rights().ToList();
+            }
         }
     }
 }

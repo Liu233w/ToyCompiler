@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using LanguageExt;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
+using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 using Liu233w.Compiler.EX1.libs;
 
 namespace Liu233w.Compiler.EX1
@@ -134,7 +137,7 @@ namespace Liu233w.Compiler.EX1
         /// <summary>
         /// 需要进行转换的关键字
         /// </summary>
-        public static HashSet<string> GetSymbolConvertSet() => new HashSet<string>
+        public static System.Collections.Generic.HashSet<string> GetSymbolConvertSet() => new System.Collections.Generic.HashSet<string>
         {
             TokenTypes.Thread,
             TokenTypes.Features,
@@ -177,11 +180,14 @@ namespace Liu233w.Compiler.EX1
             }
         }
 
-        public static IEnumerable<Token> TokenizeBuffer(string buffer)
+        public static Either<List<WrongTokenException>, List<Token>> TokenizeBuffer(string buffer)
         {
-            var tokens = AutomataTokenizer.GetAllTokenByAutomata(Ex1Automata, buffer)
-                .ExcludeTokenType(SpaceToken);
-            return ConvertSymbolToIdentifiers(tokens);
+            return AutomataTokenizer.GetAllTokenByAutomata(Ex1Automata, buffer)
+                .Seprate()
+                .Match<Either<List<WrongTokenException>, List<Token>>>(
+                    Right: r => ConvertSymbolToIdentifiers(r.ExcludeTokenType(SpaceToken)).ToList(),
+                    Left: l => l
+                );
         }
     }
 }

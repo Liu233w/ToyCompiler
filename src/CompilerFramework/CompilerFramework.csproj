@@ -6,4 +6,8 @@
     <RootNamespace>Liu233w.Compiler.CompilerFramework</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="LanguageExt.Core" Version="3.0.1" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Liu233w.Compiler.CompilerFramework.Test;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 using Liu233w.Compiler.EX1.libs;
@@ -24,7 +25,7 @@ namespace Liu233w.Compiler.EX1.Test
             var autoMata = AutomataTokenizerState.ForBegin(new List<AutomataTokenizerState> { Ex1Tokenizer.Symbol });
 
             var res = AutomataTokenizer.GetByAutomata(autoMata, buffer, 0, out var endIdx);
-            res.TokenType.ShouldBe(Ex1Tokenizer.SymbolToken);
+            res.ShouldBeRight(token => token.TokenType.ShouldBe(Ex1Tokenizer.SymbolToken));
             endIdx.ShouldBe(expectEndAt);
         }
 
@@ -38,8 +39,8 @@ namespace Liu233w.Compiler.EX1.Test
         {
             var autoMata = AutomataTokenizerState.ForBegin(new List<AutomataTokenizerState> { Ex1Tokenizer.Symbol });
 
-            var exception = Should.Throw<WrongTokenException>(() => AutomataTokenizer.GetByAutomata(autoMata, buffer, 0, out _));
-            exception.CurrentIdx.ShouldBe(expectCurrentIdx);
+            AutomataTokenizer.GetByAutomata(autoMata, buffer, 0, out _)
+                .ShouldBeLeft(exception => { exception.CurrentIdx.ShouldBe(expectCurrentIdx); });
         }
 
         [Theory]
@@ -56,7 +57,7 @@ namespace Liu233w.Compiler.EX1.Test
             var autoMata = AutomataTokenizerState.ForBegin(Ex1Tokenizer.DecimalOrArrow2);
 
             var res = AutomataTokenizer.GetByAutomata(autoMata, buffer, 0, out var endIdx);
-            res.TokenType.ShouldBe(expectedTokenType);
+            res.ShouldBeRight(token => token.TokenType.ShouldBe(expectedTokenType));
             endIdx.ShouldBe(expectEndAt);
         }
 
@@ -70,8 +71,8 @@ namespace Liu233w.Compiler.EX1.Test
         {
             var autoMata = AutomataTokenizerState.ForBegin(Ex1Tokenizer.DecimalOrArrow2);
 
-            var exception = Should.Throw<WrongTokenException>(() => AutomataTokenizer.GetByAutomata(autoMata, buffer, 0, out _));
-            exception.CurrentIdx.ShouldBe(expectCurrentIdx);
+            AutomataTokenizer.GetByAutomata(autoMata, buffer, 0, out _)
+                .ShouldBeLeft(exception => { exception.CurrentIdx.ShouldBe(expectCurrentIdx); });
         }
     }
 }
