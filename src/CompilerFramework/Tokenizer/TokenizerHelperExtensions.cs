@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Liu233w.Compiler.CompilerFramework.Tokenizer
 {
@@ -15,6 +17,17 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         public static Func<char, bool> MatchCurrentPosition(this char c)
         {
             return it => it == c;
+        }
+
+        /// <summary>
+        /// 从词法单元流中移除指定类型的Token
+        /// </summary>
+        /// <param name="tokens"></param>
+        /// <param name="tokenType"></param>
+        /// <returns></returns>
+        public static IEnumerable<Token> ExcludeTokenType(this IEnumerable<Token> tokens, string tokenType)
+        {
+            return tokens.Where(token => token.TokenType != tokenType);
         }
     }
 }

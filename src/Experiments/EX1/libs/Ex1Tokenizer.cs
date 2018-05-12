@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
 using Liu233w.Compiler.EX1.libs;
@@ -104,6 +105,83 @@ namespace Liu233w.Compiler.EX1
             }
         }
 
+        public static AutomataTokenizerState Ex1Automata
+        {
+            get
+            {
+                var automata = AutomataTokenizerState.ForBegin(new List<AutomataTokenizerState>
+                {
+                    LeftBrace,
+                    RightBrace,
+                    Arrow1,
+                    Arrow3,
+                    Colons,
+                    SemiColon,
+                    Space,
+                    Symbol,
+                });
+                foreach (var state in DecimalOrArrow2)
+                {
+                    automata.NextStates.Add(state);
+                }
+
+                return automata;
+            }
+        }
+
         #endregion
+
+        /// <summary>
+        /// 需要进行转换的关键字
+        /// </summary>
+        public static HashSet<string> GetSymbolConvertSet() => new HashSet<string>
+        {
+            TokenTypes.Thread,
+            TokenTypes.Features,
+            TokenTypes.Flows,
+            TokenTypes.Properties,
+            TokenTypes.End,
+            TokenTypes.None,
+            TokenTypes.In,
+            TokenTypes.Out,
+            TokenTypes.Data,
+            TokenTypes.Port,
+            TokenTypes.Event,
+            TokenTypes.Parameter,
+            TokenTypes.Flow,
+            TokenTypes.Source,
+            TokenTypes.Sink,
+            TokenTypes.Path,
+            TokenTypes.Constant,
+            TokenTypes.Access,
+        };
+
+        /// <summary>
+        /// 将标记为 Symbol 的语法单元转换成相应的关键词或 Identifier
+        /// </summary>
+        /// <param name="tokens"></param>
+        /// <returns></returns>
+        public static IEnumerable<Token> ConvertSymbolToIdentifiers(IEnumerable<Token> tokens)
+        {
+            var set = GetSymbolConvertSet();
+            foreach (var token in tokens)
+            {
+                if (token.TokenType != SymbolToken || !set.Contains(token.Content))
+                {
+                    yield return token;
+                }
+                else
+                {
+                    yield return new Token(token.Content, token.Content, token.TokenBeginIdx, token.TokenEndIdx);
+                }
+            }
+        }
+
+        public static IEnumerable<Token> TokenizeBuffer(string buffer)
+        {
+            var tokens = AutomataTokenizer.GetAllTokenByAutomata(Ex1Automata, buffer)
+                .ExcludeTokenType(SpaceToken);
+            return ConvertSymbolToIdentifiers(tokens);
+        }
     }
 }
