@@ -36,7 +36,7 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// <param name="buffer">要遍历的字符串</param>
         /// <param name="beginIdx">本语法单元的起点</param>
         /// <param name="nextBeginIdx">返回下一个语法单元的起点</param>
-        /// <returns>如果能够读取，返回读到的语法单元。否则返回 null</returns>
+        /// <returns>返回读到的最后一个语法单元。如果正常终止，其类型应但是 EndType，否则是不正确的语法</returns>
         /// <exception cref="TokenizerException"></exception>
         /// <exception cref="WrongTokenException">无法解析当前语法单元时抛出</exception>
         public static Token GetByAutomata(AutomataTokenizerState automataState, string buffer, int beginIdx,
@@ -86,10 +86,11 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         private static int WalkBuffer(string buffer, int beginIdx, AutomataTokenizerState state,
             out AutomataTokenizerState endState)
         {
+            endState = state;
+
             // 读到结尾
             if (beginIdx >= buffer.Length)
             {
-                endState = state;
                 return buffer.Length;
             }
 
@@ -97,16 +98,11 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
             {
                 if (nextState.Asserter(buffer[beginIdx]))
                 {
-                    var endIdx = WalkBuffer(buffer, beginIdx + 1, nextState, out endState);
-                    if (endState.StateType == AutomataTokenizerStateType.EndState)
-                    {
-                        return endIdx;
-                    }
+                    return WalkBuffer(buffer, beginIdx + 1, nextState, out endState);
                 }
             }
 
             // 没有找到合适的下个节点
-            endState = state;
             return beginIdx;
         }
     }

@@ -13,6 +13,8 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
 
         private readonly AutomataTokenizerState _nameWithCommentState;
 
+        private readonly AutomataTokenizerState _certainState;
+
         public AutomataTokenizer_Test()
         {
             var nameEndState = AutomataTokenizerState.ForEnd(char.IsLetterOrDigit, "name");
@@ -44,10 +46,21 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
                     AutomataTokenizerState.ForMiddle('*'.MatchCurrentPosition(),
                         new List<AutomataTokenizerState>
                         {
-                            // 状态机是按顺序遍历的，将 body 放在前面也能正常运行，但是放在后面效率比较高（End要判断的步骤少）
+                            // 状态机是按顺序遍历的，假如将 body 放在前面，就不会回溯了
                             commentEnd,
                             commentBody,
                         }),
+                })
+            });
+
+            _certainState = AutomataTokenizerState.ForBegin(new List<AutomataTokenizerState>
+            {
+                AutomataTokenizerState.ForMiddle('1'.MatchCurrentPosition(), new List<AutomataTokenizerState>
+                {
+                    AutomataTokenizerState.ForMiddle('2'.MatchCurrentPosition(), new List<AutomataTokenizerState>
+                    {
+                        AutomataTokenizerState.ForEnd('3'.MatchCurrentPosition(), "certain")
+                    })
                 })
             });
         }
@@ -92,6 +105,31 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
 
             res.ShouldMatchObject(new Token("a", "name", 0, 1));
             end.ShouldBe(1);
+        }
+
+        [Theory]
+        [InlineData("a", 0, 0)]
+        [InlineData("1a", 1, '1')]
+        [InlineData("12a", 2, '2')]
+        public void GetByAutomata_在无法识别时能够抛出含有终点位置的异常(string buffer, int expectEndAt, char expectStateAt)
+        {
+            // 使用有限状态机进行遍历不应该有回溯操作，所以这里应该直接返回已经识别的Token
+            int nextBeginIdx = -1;
+            var exception =
+                Should.Throw<WrongTokenException>(
+                    () => AutomataTokenizer.GetByAutomata(_certainState, buffer, 0, out nextBeginIdx));
+
+            nextBeginIdx.ShouldBe(expectEndAt);
+            exception.CurrentIdx.ShouldBe(expectEndAt);
+            exception.TokenBegin.ShouldBe(0);
+            if (expectStateAt == 0)
+            {
+                exception.CurrentState.Asserter.ShouldBeNull();
+            }
+            else
+            {
+                exception.CurrentState.Asserter(expectStateAt).ShouldBeTrue();
+            }
         }
 
         [Fact]
