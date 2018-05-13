@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Assert" Version="4.2.1" />
     <PackageReference Include="LanguageExt.Core" Version="3.0.1" />
   </ItemGroup>
 

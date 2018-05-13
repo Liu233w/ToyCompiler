@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Text;
-using AssertLibrary;
 
 namespace Liu233w.Compiler.CompilerFramework.Utils
 {
@@ -126,9 +125,7 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
         /// <returns></returns>
         public string GetPositionRangeMap(int line, int begColumn, int endColumn)
         {
-            Assert.IsTrue(begColumn <= endColumn, $"{nameof(begColumn)} < {nameof(endColumn)}");
-
-            if (begColumn == endColumn)
+            if (begColumn >= endColumn)
             {
                 return GetPositionMap(line, begColumn);
             }
