@@ -76,10 +76,10 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Utils
         [Fact]
         public void GetPositionRangeMap_能够获得正确的Map()
         {
-            var map = _lineNumberFixer.GetPositionRangeMap(3, 2, 6);
+            var map = _lineNumberFixer.GetPositionRangeMap(3, 3, 7);
             map.ShouldBe("ffffffff" + Environment.NewLine +
-                         " |   ^" + Environment.NewLine +
-                         " -----");
+                         "  |   ^" + Environment.NewLine +
+                         "  -----");
         }
     }
 }
