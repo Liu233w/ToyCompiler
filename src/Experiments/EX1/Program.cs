@@ -13,16 +13,37 @@ namespace Liu233w.Compiler.EX1
     {
         static void Main(string[] args)
         {
+            if (args.Length < 1)
+            {
+                Console.WriteLine("参数：要进行分析的源代码路径");
+                Console.WriteLine("分析结果会通过标准IO输出");
+                Console.WriteLine();
+                Console.WriteLine("使用例子：");
+                Console.WriteLine("dotnet run -- /path/to/your/file");
+                Console.WriteLine();
+                Console.WriteLine("假如您想要输出到文件，请使用IO重定向功能，例如：");
+                Console.WriteLine("dotnet run -- /path/to/your/file >output.txt 2>&1");
+                Console.WriteLine();
+                return;
+            }
+
             var path = args[0];
-            var buffer = File.ReadAllText(path);
+            try
+            {
+                var buffer = File.ReadAllText(path);
 
-            var res = Ex1Tokenizer.TokenizeBuffer(buffer);
-            var fixer = new LineNumberFixer(buffer);
+                var res = Ex1Tokenizer.TokenizeBuffer(buffer);
+                var fixer = new LineNumberFixer(buffer);
 
-            res.Match(
-                Right: r => PrintRight(r, fixer),
-                Left: l => PrintLeft(l, fixer)
-            );
+                res.Match(
+                    Right: r => PrintRight(r, fixer),
+                    Left: l => PrintLeft(l, fixer)
+                );
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.Error.WriteLine($"文件 {path} 不存在");
+            }
         }
 
         private static void PrintRight(IEnumerable<Token> tokens, LineNumberFixer fixer)
