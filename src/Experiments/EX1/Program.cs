@@ -13,7 +13,7 @@ namespace Liu233w.Compiler.EX1
     {
         static void Main(string[] args)
         {
-            var path = args[1];
+            var path = args[0];
             var buffer = File.ReadAllText(path);
 
             var res = Ex1Tokenizer.TokenizeBuffer(buffer);
