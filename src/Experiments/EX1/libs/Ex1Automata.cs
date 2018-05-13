@@ -17,12 +17,6 @@ namespace Liu233w.Compiler.EX1.libs
         public static AutomataTokenizerState SemiColon =>
             AutomataTokenizerState.ForEnd(';'.MatchCurrentPosition(), TokenTypes.Semicolon);
 
-        public static AutomataTokenizerState Arrow3 =>
-            AutomataTokenizerState.ForMiddle('-'.MatchCurrentPosition(), new List<AutomataTokenizerState>
-            {
-                AutomataTokenizerState.ForEnd('>'.MatchCurrentPosition(), TokenTypes.Arraw3)
-            });
-
         public static AutomataTokenizerState Colons =>
             AutomataTokenizerState.ForEnd(':'.MatchCurrentPosition(), TokenTypes.SingleColon,
                 new List<AutomataTokenizerState>
@@ -39,7 +33,7 @@ namespace Liu233w.Compiler.EX1.libs
         /// <summary>
         ///  识别数字和 Arrow2。有多个入口，所以返回数组
         /// </summary>
-        public static AutomataTokenizerState[] DecimalOrArrow2
+        public static AutomataTokenizerState[] DecimalOrArrow2OrArrow3
         {
             get
             {
@@ -53,8 +47,12 @@ namespace Liu233w.Compiler.EX1.libs
                     new List<AutomataTokenizerState> { endStateWithDot });
                 numeral.NextStates.Add(numeral);
 
-                var sign = AutomataTokenizerState.ForMiddle('-'.MatchCurrentPosition(),
-                    new List<AutomataTokenizerState> { numeral });
+                var arrow3OrNumeral = AutomataTokenizerState.ForMiddle('-'.MatchCurrentPosition(),
+                    new List<AutomataTokenizerState>
+                    {
+                        numeral,
+                        AutomataTokenizerState.ForEnd('>'.MatchCurrentPosition(), TokenTypes.Arraw3),
+                    });
 
                 var arrow2OrNumeral =
                     AutomataTokenizerState.ForMiddle('+'.MatchCurrentPosition(), new List<AutomataTokenizerState>
@@ -66,7 +64,7 @@ namespace Liu233w.Compiler.EX1.libs
                         numeral,
                     });
 
-                return new[] { numeral, sign, arrow2OrNumeral };
+                return new[] { numeral, arrow3OrNumeral, arrow2OrNumeral };
             }
         }
 
@@ -109,13 +107,12 @@ namespace Liu233w.Compiler.EX1.libs
                     LeftBrace,
                     RightBrace,
                     Arrow1,
-                    Arrow3,
                     Colons,
                     SemiColon,
                     Space,
                     Symbol,
                 });
-                foreach (var state in DecimalOrArrow2)
+                foreach (var state in DecimalOrArrow2OrArrow3)
                 {
                     automata.NextStates.Add(state);
                 }
