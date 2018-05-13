@@ -103,7 +103,7 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
             var lastLine = line >= _lineMapper.Count;
 
             var startIdx = _lineMapper[line - 1];
-            var endIdx = lastLine ? _buffer.Length - 1 : _lineMapper[line];
+            var endIdx = lastLine ? _buffer.Length : _lineMapper[line];
 
             var lineStr = _buffer.Substring(startIdx, endIdx - startIdx); // 包含了换行符
 
@@ -129,6 +129,7 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
             builder.Append(' ', begColumn - 1);
             builder.Append('|');
             builder.Append(' ', endColumn - begColumn - 1);
+            builder.Append('^');
             builder.AppendLine();
             builder.Append(' ', begColumn - 1);
             builder.Append('-', endColumn - 1);
