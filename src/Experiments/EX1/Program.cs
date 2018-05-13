@@ -5,6 +5,7 @@ using Liu233w.Compiler.CompilerFramework.Tokenizer;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 using Liu233w.Compiler.CompilerFramework.Utils;
 using Liu233w.Compiler.EX1.libs;
+using Shouldly;
 
 namespace Liu233w.Compiler.EX1
 {
@@ -18,9 +19,13 @@ namespace Liu233w.Compiler.EX1
             var res = Ex1Tokenizer.TokenizeBuffer(buffer);
             var fixer = new LineNumberFixer(buffer);
 
+            res.Match(
+                Right: r => PrintRight(r, fixer),
+                Left: l => PrintLeft(l, fixer)
+            );
         }
 
-        private void PrintRight(List<Token> tokens, LineNumberFixer fixer)
+        private static void PrintRight(IEnumerable<Token> tokens, LineNumberFixer fixer)
         {
             foreach (var token in tokens)
             {
@@ -32,9 +37,20 @@ namespace Liu233w.Compiler.EX1
             }
         }
 
-        private void PrintLeft(List<WrongTokenException> exceptions, LineNumberFixer fixer)
+        private static void PrintLeft(IEnumerable<WrongTokenException> exceptions, LineNumberFixer fixer)
         {
-
+            Console.Error.WriteLine("无法识别的语法单元：");
+            foreach (var exception in exceptions)
+            {
+                var beginPosition = fixer.GetPosition(exception.TokenBegin);
+                var endPosition = fixer.GetPosition(exception.CurrentIdx);
+#if DEBUG
+                beginPosition.line.ShouldBe(endPosition.line);
+#endif
+                Console.Error.WriteLine($"在 {endPosition.TidyPosition()} 处：");
+                Console.Error.WriteLine();
+                Console.Error.WriteLine(fixer.GetPositionRangeMap(beginPosition.line, beginPosition.column, endPosition.column));
+            }
         }
     }
 }
