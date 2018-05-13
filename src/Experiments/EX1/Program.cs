@@ -40,7 +40,7 @@ namespace Liu233w.Compiler.EX1
                     Left: l => PrintLeft(l, fixer)
                 );
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 Console.Error.WriteLine($"文件 {path} 不存在");
             }
