@@ -131,7 +131,7 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
             builder.Append('^');
             builder.AppendLine();
             builder.Append(' ', begColumn - 1);
-            builder.Append('-', endColumn - 1);
+            builder.Append('-', endColumn - begColumn + 1);
 
             return builder.ToString();
         }
