@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Liu233w.Compiler.CompilerFramework.Utils;
 using Shouldly;
@@ -12,7 +13,8 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Utils
 
         public LineNumberFixer_Test()
         {
-            const string buffer = "123\n456\nffffffff\n";
+            // 最后一行可能没有换行符
+            const string buffer = "123\n456\nffffffff";
             Debug.Assert(buffer.Length == 17);
 
             _lineNumberFixer = new LineNumberFixer(buffer);
@@ -50,6 +52,15 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Utils
             var map = _lineNumberFixer.GetPositionMap(2, 2);
             map.ShouldBe("456\n" +
                          " ^");
+        }
+
+        [Fact]
+        public void GetPositionRangeMap_能够获得正确的Map()
+        {
+            var map = _lineNumberFixer.GetPositionRangeMap(3, 2, 6);
+            map.ShouldBe("ffffffff" + Environment.NewLine +
+                         " |   ^" + Environment.NewLine +
+                         " -----");
         }
     }
 }

@@ -86,13 +86,52 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
         /// <returns></returns>
         public string GetPositionMap(int line, int column)
         {
+            var builder = GetMapLine(line);
+            builder.Append(' ', column - 1);
+            builder.Append('^');
+
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// 获取指定的行的 StringBuilder，最后一定有换行符。如果是最后一行（末尾没有换行符），会自动加上换行符
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        private StringBuilder GetMapLine(int line)
+        {
+            var lastLine = line >= _lineMapper.Count;
+
             var startIdx = _lineMapper[line - 1];
-            var endIdx = _lineMapper[line];
+            var endIdx = lastLine ? _buffer.Length - 1 : _lineMapper[line];
+
             var lineStr = _buffer.Substring(startIdx, endIdx - startIdx); // 包含了换行符
 
             var builder = new StringBuilder(lineStr);
-            builder.Append(' ', column - 1);
-            builder.Append('^');
+            if (lastLine)
+            {
+                builder.AppendLine();
+            }
+
+            return builder;
+        }
+
+        /// <summary>
+        /// 获取一个字符串，用字符画的形式标出指定的范围（只能标出一行中的范围）
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="begColumn"></param>
+        /// <param name="endColumn"></param>
+        /// <returns></returns>
+        public string GetPositionRangeMap(int line, int begColumn, int endColumn)
+        {
+            var builder = GetMapLine(line);
+            builder.Append(' ', begColumn - 1);
+            builder.Append('|');
+            builder.Append(' ', endColumn - begColumn - 1);
+            builder.AppendLine();
+            builder.Append(' ', begColumn - 1);
+            builder.Append('-', endColumn - 1);
 
             return builder.ToString();
         }
