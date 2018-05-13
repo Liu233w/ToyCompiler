@@ -15,7 +15,9 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Utils
         {
             // 最后一行可能没有换行符
             const string buffer = "123\n456\nffffffff";
-            Debug.Assert(buffer.Length == 17);
+#if DEBUG
+            buffer.Length.ShouldBe(17);
+#endif
 
             _lineNumberFixer = new LineNumberFixer(buffer);
         }
