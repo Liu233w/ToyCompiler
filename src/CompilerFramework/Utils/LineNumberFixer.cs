@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Liu233w.Compiler.CompilerFramework.Utils
 {
@@ -12,10 +13,13 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
         /// <summary>
         /// [x] = y 表示第x行第一个字符是 buffer 中的第y个字符
         /// </summary>
-        private List<int> _lineMapper;
+        private readonly List<int> _lineMapper;
+
+        private readonly string _buffer;
 
         public LineNumberFixer(string buffer)
         {
+            _buffer = buffer;
             _lineMapper = new List<int> { 0 };
 
             for (int i = 0; i < buffer.Length; i++)
@@ -72,6 +76,32 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
         {
             var line = GetLineNumber(index);
             return (line + 1, index - _lineMapper[line] + 1);
+        }
+
+        /// <summary>
+        /// 获取一个字符串，用字符画的形式标出指定的位置
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public string GetPositionMap(int line, int column)
+        {
+            var startIdx = _lineMapper[line - 1];
+            var endIdx = _lineMapper[line];
+            var lineStr = _buffer.Substring(startIdx, endIdx - startIdx); // 包含了换行符
+
+            var builder = new StringBuilder(lineStr);
+            builder.Append(' ', column - 1);
+            builder.Append('^');
+
+            return builder.ToString();
+        }
+
+        public (int line, int column, string positionMap) GetPositionWithMap(int index)
+        {
+            var (line, column) = GetPosition(index);
+            var map = GetPositionMap(line, column);
+            return (line, column, map);
         }
     }
 }

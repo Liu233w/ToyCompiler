@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices.ComTypes;
 using Liu233w.Compiler.CompilerFramework.Utils;
 using Shouldly;
 using Xunit;
@@ -26,7 +25,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Utils
         [InlineData(4, 1)]
         [InlineData(8, 2)]
         [InlineData(16, 2)]
-        void GetLineNumber_能够返回正确的行数(int idx, int line)
+        public void GetLineNumber_能够返回正确的行数(int idx, int line)
         {
             _lineNumberFixer.GetLineNumber(idx).ShouldBe(line);
         }
@@ -38,11 +37,19 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Utils
         [InlineData(4, 2, 1)]
         [InlineData(8, 3, 1)]
         [InlineData(16, 3, 9)]
-        void GetPosition_能够返回正确的位置(int idx, int expectLine, int expectColumn)
+        public void GetPosition_能够返回正确的位置(int idx, int expectLine, int expectColumn)
         {
             var (line, column) = _lineNumberFixer.GetPosition(idx);
             line.ShouldBe(expectLine);
             column.ShouldBe(expectColumn);
+        }
+
+        [Fact]
+        public void GetPositionMap_能够获得正确的Map()
+        {
+            var map = _lineNumberFixer.GetPositionMap(2, 2);
+            map.ShouldBe("456\n" +
+                         " ^");
         }
     }
 }
