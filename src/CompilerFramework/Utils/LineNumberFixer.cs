@@ -105,6 +105,7 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
             var endIdx = lastLine ? _buffer.Length : _lineMapper[line];
 
             var lineStr = _buffer.Substring(startIdx, endIdx - startIdx); // 包含了换行符
+            lineStr = lineStr.Replace('\t', ' ');
 
             var builder = new StringBuilder(lineStr);
             if (lastLine)
