@@ -81,5 +81,13 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Utils
                          "  |   ^" + Environment.NewLine +
                          "  -----");
         }
+
+        [Fact]
+        public void GetPositionRangeMap_在beg和end重合时只显示一个箭头()
+        {
+            var map = _lineNumberFixer.GetPositionRangeMap(3, 3, 3);
+            map.ShouldBe("ffffffff" + Environment.NewLine +
+                         "  ^");
+        }
     }
 }
