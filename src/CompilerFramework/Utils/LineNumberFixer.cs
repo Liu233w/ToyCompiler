@@ -51,7 +51,7 @@ namespace Liu233w.Compiler.CompilerFramework.Utils
             while (beg < end - 1)
             {
                 if (_lineMapper[beg] == index) return beg;
-                if (_lineMapper[end] == index) return end;
+                if (_lineMapper[end] <= index) return end;
 
                 var middle = (end + beg) / 2;
                 var middleVal = _lineMapper[middle];
