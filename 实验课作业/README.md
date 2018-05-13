@@ -6,6 +6,6 @@
 
 您至少需要 .Net Core 2.0 以上来运行此程序。
 
-实验课源代码保存在 /src/Experiments/ 中，一次实验一个项目。
+实验课源代码保存在 [/src/Experiments/](../src/Experiments/) 中，一次实验一个项目。
 
-每次实验都有单元测试，您可以在 /test/Experiments/ 中访问所有实验的测试用例。
+每次实验都有单元测试，您可以在 [/test/Experiments/](../test/Experiments/) 中访问所有实验的测试用例。
