@@ -40,6 +40,8 @@ namespace Liu233w.Compiler.EX1
         private static void PrintLeft(IEnumerable<WrongTokenException> exceptions, LineNumberFixer fixer)
         {
             Console.Error.WriteLine("无法识别的语法单元：");
+            Console.Error.WriteLine();
+
             foreach (var exception in exceptions)
             {
                 var beginPosition = fixer.GetPosition(exception.TokenBegin);
@@ -50,6 +52,7 @@ namespace Liu233w.Compiler.EX1
                 Console.Error.WriteLine($"在 {endPosition.TidyPosition()} 处：");
                 Console.Error.WriteLine();
                 Console.Error.WriteLine(fixer.GetPositionRangeMap(beginPosition.line, beginPosition.column, endPosition.column));
+                Console.Error.WriteLine();
             }
         }
     }
