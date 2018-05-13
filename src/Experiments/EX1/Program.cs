@@ -32,8 +32,8 @@ namespace Liu233w.Compiler.EX1
                 var beginPosition = fixer.GetPosition(token.TokenBeginIdx).TidyPosition();
                 var endPosition = fixer.GetPosition(token.TokenEndIdx).TidyPosition();
 
-                Console.WriteLine($"类型：“{token.TokenType}”； 内容：“{token.Content}”；" +
-                                  $"起始位置：{beginPosition}；终止位置：{endPosition} ");
+                Console.WriteLine($"类型：“{token.TokenType}”\n内容：“{token.Content}”\n" +
+                                  $"起始位置：{beginPosition}\n终止位置：{endPosition}\n");
             }
         }
 
