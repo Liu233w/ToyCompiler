@@ -52,5 +52,31 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
                 return enumerable.Rights().ToList();
             }
         }
+
+        /// <summary>
+        /// 根据 typeTable 转换 Token 类型。用于从标识符中分离出关键字
+        /// </summary>
+        /// <param name="tokens">输入序列</param>
+        /// <param name="sourceTokenType">输入的token序列中需要转换的token类型。如果不匹配，会直接返回此 token</param>
+        /// <param name="typeTable">关键词列表。如果 Token.Lexem 匹配列表中的词，会返回一个 TokenType 是 Lexem 的 Token</param>
+        /// <param name="unMatchedType">如果不匹配关键词列表，返回的 Token 的 TokenType</param>
+        /// <returns></returns>
+        public static IEnumerable<Token> TransformTokenTypeMatched(this IEnumerable<Token> tokens,
+            string sourceTokenType, ISet<string> typeTable, string unMatchedType)
+        {
+            return tokens.Select(token =>
+            {
+                if (token.TokenType == sourceTokenType)
+                {
+                    return new Token(token.Lexem,
+                        typeTable.Contains(token.Lexem) ? token.Lexem : unMatchedType,
+                        token.TokenBeginIdx, token.TokenEndIdx);
+                }
+                else
+                {
+                    return token;
+                }
+            });
+        }
     }
 }

@@ -13,7 +13,9 @@ namespace Liu233w.Compiler.EX1.libs
             return AutomataTokenizer.GetAllTokenByAutomata(Ex1Automata.ForBegin, buffer)
                 .Seprate()
                 .Match<Either<List<WrongTokenException>, List<Token>>>(
-                    Right: r => ConvertSymbolToIdentifiers(r.ExcludeTokenType(Ex1Automata.SpaceToken)).ToList(),
+                    Right: r => r.ExcludeTokenType(Ex1Automata.SpaceToken)
+                        .TransformTokenTypeMatched(Ex1Automata.SymbolToken, GetSymbolConvertSet(), TokenTypes.Identifier)
+                        .ToList(),
                     Left: l => l
                 );
         }
@@ -42,23 +44,5 @@ namespace Liu233w.Compiler.EX1.libs
             TokenTypes.Constant,
             TokenTypes.Access,
         };
-
-        /// <summary>
-        /// 将标记为 Symbol 的语法单元转换成相应的关键词或 Identifier
-        /// </summary>
-        /// <param name="tokens"></param>
-        /// <returns></returns>
-        private static IEnumerable<Token> ConvertSymbolToIdentifiers(IEnumerable<Token> tokens)
-        {
-            var set = GetSymbolConvertSet();
-            foreach (var token in tokens)
-            {
-                if (token.TokenType == Ex1Automata.SymbolToken)
-                {
-                    token.TokenType = set.Contains(token.Lexem) ? token.Lexem : TokenTypes.Identifier;
-                }
-                yield return token;
-            }
-        }
     }
 }
