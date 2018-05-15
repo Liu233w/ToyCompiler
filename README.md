@@ -15,6 +15,8 @@
 - [./src/Experiments/](./src/Experiments/): 所有的实验课代码
 - [./test/Experiments/](./test/Experiments/): 所有的实验课单元测试
 
+- [./CodePiece](./CodePiece) 随笔，随堂作业（测试和代码放到一起了）
+
 - [./实验课作业](./实验课作业) : 实验课题目要求及作业运行脚本（参见此路径下的 README）
 
 其他放在根目录的文件都是之前写的，以后会被重写并移动到 src 和 test 文件夹中。根目录目前包含：
