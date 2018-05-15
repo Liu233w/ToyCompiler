@@ -214,7 +214,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Tokenizer
                 "comment", "space", "name", "space", "name",
                 "comment", "name", "space",
             });
-            enumerable.Select(item => item.Content).ToArray().ShouldMatchObject(new[]
+            enumerable.Select(item => item.Lexem).ToArray().ShouldMatchObject(new[]
             {
                 "abc", " ", "def", " ", "ggg", " ", "/*fdsafdsf  fff  */",
                 " ", "llll", " ", "a", "/**/", "a", " ",

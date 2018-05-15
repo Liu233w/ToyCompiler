@@ -55,7 +55,7 @@ namespace Liu233w.Compiler.EX1.libs
             {
                 if (token.TokenType == Ex1Automata.SymbolToken)
                 {
-                    token.TokenType = set.Contains(token.Content) ? token.Content : TokenTypes.Identifier;
+                    token.TokenType = set.Contains(token.Lexem) ? token.Lexem : TokenTypes.Identifier;
                 }
                 yield return token;
             }

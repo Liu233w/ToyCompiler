@@ -6,9 +6,9 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
     public class Token
     {
         /// <summary>
-        /// 语法单元的
+        /// 语法单元的词素
         /// </summary>
-        public string Content { get; set; }
+        public string Lexem { get; set; }
 
         /// <summary>
         /// 语法单元的类型
@@ -25,9 +25,9 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// </summary>
         public int TokenEndIdx { get; set; }
 
-        public Token(string content, string tokenType, int tokenBeginIdx, int tokenEndIdx)
+        public Token(string lexem, string tokenType, int tokenBeginIdx, int tokenEndIdx)
         {
-            Content = content;
+            Lexem = lexem;
             TokenType = tokenType;
             TokenBeginIdx = tokenBeginIdx;
             TokenEndIdx = tokenEndIdx;
