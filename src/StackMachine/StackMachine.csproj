@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Liu233w.StackMachine</AssemblyName>
+    <RootNamespace>Liu233w.StackMachine</RootNamespace>
+  </PropertyGroup>
+
+</Project>
