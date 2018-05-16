@@ -131,6 +131,19 @@ namespace Liu233w.StackMachine
             return new CallCcInstruction(lambda);
         }
 
+        /// <summary>
+        /// 恢复 Continuation，在这条指令后面的代码都不会执行
+        /// </summary>
+        /// <param name="cont"></param>
+        /// <returns></returns>
+        protected FuncInstructionBase ResumeContinuation(Continuation cont)
+        {
+#if DEBUG
+            CheckMetaFunctionCalledTimes();
+#endif
+            return new ResumeContinuationInstruction(cont);
+        }
+
         #endregion
     }
 }

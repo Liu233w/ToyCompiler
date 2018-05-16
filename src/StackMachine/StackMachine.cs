@@ -54,7 +54,8 @@ namespace Liu233w.StackMachine
                     result = resultFrame.Result;
                 }
 
-                _callingStack.Peek().StepMove(result);
+                var instruction = _callingStack.Peek().StepMove(result);
+                ExecInstruction(instruction);
             }
         }
 
@@ -80,6 +81,11 @@ namespace Liu233w.StackMachine
                 case CallCcInstruction callcc:
                 {
                     HandleCallCc(callcc.Lambda);
+                    break;
+                }
+                case ResumeContinuationInstruction resumeContinuation:
+                {
+                    _callingStack = resumeContinuation.Cont.GetCallingStack();
                     break;
                 }
                 default:
