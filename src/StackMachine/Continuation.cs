@@ -12,22 +12,21 @@ namespace Liu233w.StackMachine
 
         internal Continuation(Stack<StackFrameFunction> callingStack)
         {
-            var snapshot = callingStack.Select(item => (StackFrameFunction)item.Clone());
-            _callingStack = new Stack<StackFrameFunction>(snapshot.Reverse());
+            _callingStack = DeepCopyStack(callingStack);
         }
 
         /// <summary>
         /// 获取调用栈，将调用栈中的每个 stackMachine 设置成指定的对象
         /// </summary>
         /// <returns></returns>
-        internal Stack<StackFrameFunction> GetAssignedCallingStack(StackMachine stackMachine)
+        internal Stack<StackFrameFunction> GetCallingStack()
         {
-            var snapshot = _callingStack.Select(item =>
-            {
-                var res = (StackFrameFunction)item.Clone();
-                res.AssignStackMachine(stackMachine);
-                return res;
-            });
+            return DeepCopyStack(_callingStack);
+        }
+
+        private static Stack<StackFrameFunction> DeepCopyStack(Stack<StackFrameFunction> stack)
+        {
+            var snapshot = stack.Select(item => (StackFrameFunction)item.Clone());
             return new Stack<StackFrameFunction>(snapshot.Reverse());
         }
     }

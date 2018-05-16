@@ -1,5 +1,6 @@
 using System;
 using Liu233w.StackMachine.Exceptions;
+using Liu233w.StackMachine.Instructions;
 
 namespace Liu233w.StackMachine
 {
@@ -11,21 +12,7 @@ namespace Liu233w.StackMachine
         /// <summary>
         /// 当前函数的程序计数器
         /// </summary>
-        internal int _pc;
-
-        /// <summary>
-        /// 跟函数相关联的栈帧虚拟机
-        /// </summary>
-        private StackMachine _stackMachine;
-
-        /// <summary>
-        /// 将本对象的虚拟机同指定的虚拟机关联起来
-        /// </summary>
-        /// <param name="stackMachine"></param>
-        internal void AssignStackMachine(StackMachine stackMachine)
-        {
-            _stackMachine = stackMachine;
-        }
+        private int _pc;
 
 #if DEBUG
         private int _metaFunctionCalledTimes;
@@ -43,24 +30,22 @@ namespace Liu233w.StackMachine
         protected StackFrameFunction()
         {
             _pc = 0;
-            _stackMachine = null;
         }
 
         protected StackFrameFunction(StackFrameFunction that)
         {
             _pc = that._pc;
-            _stackMachine = null;
 #if DEBUG
             _metaFunctionCalledTimes = that._metaFunctionCalledTimes;
 #endif
         }
 
         /// <summary>
-        /// 步进函数的封装版本
+        /// 将函数步进一步
         /// </summary>
-        /// <param name="lastReturned"></param>
-        /// <returns></returns>
-        internal bool StepMove(object lastReturned)
+        /// <param name="lastReturned">假如上一步是函数调用或call/cc，这里应该是其返回值</param>
+        /// <returns>经过此步之后函数对虚拟机发送的指令</returns>
+        public FuncInstructionBase StepMove(object lastReturned)
         {
 #if DEBUG
             _metaFunctionCalledTimes = 0;
@@ -75,8 +60,8 @@ namespace Liu233w.StackMachine
         /// </summary>
         /// <param name="pc">函数的程序计数器</param>
         /// <param name="lastReturned">上次调用的返回值，只有在调用之后才有效。</param>
-        /// <returns>是否强制退栈（暂时没有用处）</returns>
-        protected abstract bool StepMove(int pc, object lastReturned);
+        /// <returns>给虚拟机发送的指令</returns>
+        protected abstract FuncInstructionBase StepMove(int pc, object lastReturned);
 
         #region StepMove函数中可以使用的操作
 
@@ -84,26 +69,25 @@ namespace Liu233w.StackMachine
         /// 退出当前函数
         /// </summary>
         /// <param name="result">当前函数的返回值</param>
-        protected bool Return(object result)
+        protected FuncInstructionBase Return(object result)
         {
-            _stackMachine.FunctionReturn(result);
 #if DEBUG
             CheckMetaFunctionCalledTimes();
 #endif
-            return false;
+            return new ReturnInstruction(result);
         }
 
         /// <summary>
         /// 步进 Pc，进入下一个状态
         /// </summary>
         /// <returns></returns>
-        protected bool Continue()
+        protected FuncInstructionBase Continue()
         {
             ++_pc;
 #if DEBUG
             CheckMetaFunctionCalledTimes();
 #endif
-            return false;
+            return NoneInstruction.Instance;
         }
 
         /// <summary>
@@ -111,15 +95,13 @@ namespace Liu233w.StackMachine
         /// </summary>
         /// <param name="func">调用的参数</param>
         /// <returns></returns>
-        protected bool CallStackFunc(StackFrameFunction func)
+        protected FuncInstructionBase CallStackFunc(StackFrameFunction func)
         {
             ++_pc;
-            func._stackMachine = _stackMachine;
-            _stackMachine.PushStack(func);
 #if DEBUG
             CheckMetaFunctionCalledTimes();
 #endif
-            return false;
+            return new CallFuncInstruction(func);
         }
 
         /// <summary>
@@ -127,28 +109,26 @@ namespace Liu233w.StackMachine
         /// </summary>
         /// <param name="pc"></param>
         /// <returns></returns>
-        protected bool GoTo(int pc)
+        protected FuncInstructionBase GoTo(int pc)
         {
             _pc = pc;
 #if DEBUG
             CheckMetaFunctionCalledTimes();
 #endif
-            return false;
+            return NoneInstruction.Instance;
         }
 
         /// <summary>
         /// 类似于 Scheme 的 call/cc，但是由于类型限制，这里的 call/cc 返回值是 Object 类型，需要自行转换
         /// </summary>
         /// <param name="lambda"></param>
-        protected bool CallWithCurrentContinuation(Func<Continuation, object> lambda)
+        protected FuncInstructionBase CallWithCurrentContinuation(Func<Continuation, object> lambda)
         {
             ++_pc;
-            var result = lambda(_stackMachine.GetCurrentContinuation());
-            _stackMachine.ResumeWithResult(result);
 #if DEBUG
             CheckMetaFunctionCalledTimes();
 #endif
-            return false;
+            return new CallCcInstruction(lambda);
         }
 
         #endregion

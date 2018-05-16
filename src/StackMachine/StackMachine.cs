@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using Liu233w.StackMachine.Exceptions;
+using Liu233w.StackMachine.Instructions;
 
 namespace Liu233w.StackMachine
 {
@@ -31,7 +34,7 @@ namespace Liu233w.StackMachine
         /// <returns></returns>
         public object RunWithContinuation(Continuation continuation)
         {
-            _callingStack = continuation.GetAssignedCallingStack(this);
+            _callingStack = continuation.GetCallingStack();
             StartStepping();
             return ((StackFrameResult)_callingStack.Pop()).Result;
         }
@@ -55,35 +58,67 @@ namespace Liu233w.StackMachine
             }
         }
 
-        internal void PushStack(StackFrameFunction func)
+        private void ExecInstruction(FuncInstructionBase instruction)
+        {
+            switch (instruction)
+            {
+                case NoneInstruction _:
+                {
+                    // Nothing here
+                    break;
+                }
+                case ReturnInstruction ret:
+                {
+                    HandleFunctionReturn(ret.Result);
+                    break;
+                }
+                case CallFuncInstruction call:
+                {
+                    PushStack(call.Func);
+                    break;
+                }
+                case CallCcInstruction callcc:
+                {
+                    HandleCallCc(callcc.Lambda);
+                    break;
+                }
+                default:
+                {
+                    throw new InvalidInstructionException("不支持此指令");
+                }
+            }
+        }
+
+        private void PushStack(StackFrameFunction func)
         {
             _callingStack.Push(func);
         }
 
         /// <summary>
-        /// 获取当前状态下的续延
+        /// 处理 CallCc 操作
         /// </summary>
         /// <returns></returns>
-        internal Continuation GetCurrentContinuation()
+        private void HandleCallCc(Func<Continuation, object> lambda)
         {
-            return new Continuation(_callingStack);
+            var result = lambda(new Continuation(_callingStack));
+            ResumeWithResult(result);
         }
 
         /// <summary>
-        /// 用一个栈帧来代替栈顶的函数栈帧
+        /// 用一个结果栈帧来代替栈顶的函数栈帧
         /// </summary>
         /// <param name="result"></param>
-        internal void FunctionReturn(object result)
+        private void HandleFunctionReturn(object result)
         {
             _callingStack.Pop();
             ResumeWithResult(result);
         }
 
         /// <summary>
-        /// 在栈顶放入一个结果
+        /// 在栈顶放入一个结果栈帧
         /// </summary>
         /// <param name="result"></param>
-        internal void ResumeWithResult(object result)
+        private void ResumeWithResult(object result)
         {
             _callingStack.Push(new StackFrameResult(result));
         }
