@@ -24,5 +24,19 @@ namespace Liu233w.StackMachine.Test
             r1.Should().Be(0);
             r2.Should().Be(10);
         }
+
+        [Fact]
+        public void 测试CallCc()
+        {
+            var result = _machine.Run(new CallCcFunc());
+            var (cont, returnedFromContinuation) = ((Continuation, bool)) result;
+
+            returnedFromContinuation.Should().Be(false);
+
+            result = _machine.RunWithContinuation(cont, true);
+            (_, returnedFromContinuation) = ((Continuation, bool)) result;
+
+            returnedFromContinuation.Should().Be(true);
+        }
     }
 }
