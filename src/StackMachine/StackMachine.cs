@@ -32,11 +32,22 @@ namespace Liu233w.StackMachine
         /// </summary>
         /// <param name="continuation"></param>
         /// <returns></returns>
-        public object RunWithContinuation(Continuation continuation)
+        public object RunWithContinuation(Continuation continuation, object input)
         {
-            _callingStack = continuation.GetCallingStack();
+            ResumeWithContinuation(continuation, input);
             StartStepping();
             return ((StackFrameResult)_callingStack.Pop()).Result;
+        }
+
+        /// <summary>
+        /// 恢复当前续延
+        /// </summary>
+        /// <param name="cont">要恢复的续延</param>
+        /// <param name="result">续延的返回值</param>
+        private void ResumeWithContinuation(Continuation cont, object result)
+        {
+            _callingStack = cont.GetCallingStack();
+            ResumeWithResult(result);
         }
 
         /// <summary>
@@ -85,7 +96,7 @@ namespace Liu233w.StackMachine
                 }
                 case ResumeContinuationInstruction resumeContinuation:
                 {
-                    _callingStack = resumeContinuation.Cont.GetCallingStack();
+                    ResumeWithContinuation(resumeContinuation.Cont, resumeContinuation.Input);
                     break;
                 }
                 default:

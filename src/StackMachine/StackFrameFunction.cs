@@ -135,13 +135,14 @@ namespace Liu233w.StackMachine
         /// 恢复 Continuation，在这条指令后面的代码都不会执行
         /// </summary>
         /// <param name="cont"></param>
+        /// <param name="input">续延的返回值</param>
         /// <returns></returns>
-        protected FuncInstructionBase ResumeContinuation(Continuation cont)
+        protected FuncInstructionBase ResumeContinuation(Continuation cont, object input)
         {
 #if DEBUG
             CheckMetaFunctionCalledTimes();
 #endif
-            return new ResumeContinuationInstruction(cont);
+            return new ResumeContinuationInstruction(cont, input);
         }
 
         #endregion

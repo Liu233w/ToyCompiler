@@ -5,11 +5,14 @@ namespace Liu233w.StackMachine.Instructions
     /// </summary>
     public class ResumeContinuationInstruction : FuncInstructionBase
     {
-        public ResumeContinuationInstruction(Continuation cont)
+        public ResumeContinuationInstruction(Continuation cont, object input)
         {
             Cont = cont;
+            Input = input;
         }
 
         public Continuation Cont { get; }
+
+        public object Input { get; }
     }
 }
