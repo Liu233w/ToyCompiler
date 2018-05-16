@@ -17,6 +17,9 @@
 
 - [./CodePiece](./CodePiece) 随笔，随堂作业（测试和代码放到一起了）
 
+- [./src/StackMachine](./src/StackMachine): 一个栈帧虚拟机，模拟了函数的调用栈，需要用侵入式的方式来使用。可以使用 call/cc
+- [./test/StackMachine](./test/StackMachine): 单元测试
+
 - [./实验课作业](./实验课作业) : 实验课题目要求及作业运行脚本（参见此路径下的 README）
 
 其他放在根目录的文件都是之前写的，以后会被重写并移动到 src 和 test 文件夹中。根目录目前包含：
