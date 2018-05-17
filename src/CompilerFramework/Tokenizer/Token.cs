@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Liu233w.Compiler.CompilerFramework.Tokenizer
