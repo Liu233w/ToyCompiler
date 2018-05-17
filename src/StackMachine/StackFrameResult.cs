@@ -5,11 +5,12 @@ namespace Liu233w.StackMachine
     /// <summary>
     /// 用于表示返回值的类，在函数退栈之后，会使用当前类的对象来代替
     /// </summary>
-    internal class StackFrameResult : StackFrameFunction
+    public class StackFrameResult : StackFrameFunction
     {
-        internal object Result { get; private set; }
+        public object Result { get; }
 
-        internal StackFrameResult(object result)
+        public StackFrameResult(object result)
+            : base(0)
         {
             Result = result;
         }

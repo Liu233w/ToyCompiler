@@ -7,6 +7,7 @@ namespace Liu233w.StackMachine.Test
         private Continuation _cont;
 
         public CallCcFunc()
+            :base(0)
         {
         }
 

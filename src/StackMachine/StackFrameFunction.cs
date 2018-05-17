@@ -29,6 +29,11 @@ namespace Liu233w.StackMachine
 
         protected StackFrameFunction()
         {
+            throw new MetaFuncWrongUsement("必须显式使用 base(0) 构造函数，或 base(that) 拷贝构造函数来初始化。不能使用默认构造函数");
+        }
+
+        protected StackFrameFunction(int _)
+        {
             _pc = 0;
         }
 

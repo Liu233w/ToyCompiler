@@ -12,6 +12,7 @@ namespace Liu233w.StackMachine.Test
         private int _variable;
 
         public SimpleFunc(int param, List<int> simpleList)
+            :base(0)
         {
             _param = param;
             _simpleList = simpleList;
