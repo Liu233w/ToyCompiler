@@ -60,7 +60,7 @@ end Thread1;
 
             Ex1Tokenizer.TokenizeBuffer(buffer)
                 .ShouldBeRight(lst => lst
-                    .Select(item => (item.Lexem, item.TokenType))
+                    .Select(item => (item.Lexeme, item.TokenType))
                     .ToArray()
                     .ShouldMatchObject(expectedSnapshhot, TypeNameHandling.None)
                 );

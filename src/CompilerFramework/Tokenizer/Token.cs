@@ -5,13 +5,13 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
     /// <summary>
     /// 表示一个语法单元的数据结构
     /// </summary>
-    [DebuggerDisplay("Lexem {Lexem} TokenType {TokenType} {TokenBeginIdx}-{TokenEndIdx}")]
+    [DebuggerDisplay("Lexeme {Lexeme} TokenType {TokenType} {TokenBeginIdx}-{TokenEndIdx}")]
     public class Token
     {
         /// <summary>
         /// 语法单元的词素
         /// </summary>
-        public string Lexem { get; set; }
+        public string Lexeme { get; set; }
 
         /// <summary>
         /// 语法单元的类型
@@ -28,9 +28,9 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// </summary>
         public int TokenEndIdx { get; set; }
 
-        public Token(string lexem, string tokenType, int tokenBeginIdx, int tokenEndIdx)
+        public Token(string lexeme, string tokenType, int tokenBeginIdx, int tokenEndIdx)
         {
-            Lexem = lexem;
+            Lexeme = lexeme;
             TokenType = tokenType;
             TokenBeginIdx = tokenBeginIdx;
             TokenEndIdx = tokenEndIdx;

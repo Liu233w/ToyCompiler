@@ -53,7 +53,7 @@ namespace Liu233w.Compiler.EX1
                 var beginPosition = fixer.GetPosition(token.TokenBeginIdx).TidyPosition();
                 var endPosition = fixer.GetPosition(token.TokenEndIdx).TidyPosition();
 
-                Console.WriteLine($"类型：“{token.TokenType}”\n词素：“{token.Lexem}”\n" +
+                Console.WriteLine($"类型：“{token.TokenType}”\n词素：“{token.Lexeme}”\n" +
                                   $"起始位置：{beginPosition}\n终止位置：{endPosition}\n");
             }
         }

@@ -58,7 +58,7 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
         /// </summary>
         /// <param name="tokens">输入序列</param>
         /// <param name="sourceTokenType">输入的token序列中需要转换的token类型。如果不匹配，会直接返回此 token</param>
-        /// <param name="typeTable">关键词列表。如果 Token.Lexem 匹配列表中的词，会返回一个 TokenType 是 Lexem 的 Token</param>
+        /// <param name="typeTable">关键词列表。如果 Token.Lexeme 匹配列表中的词，会返回一个 TokenType 是 Lexeme 的 Token</param>
         /// <param name="unMatchedType">如果不匹配关键词列表，返回的 Token 的 TokenType</param>
         /// <returns></returns>
         public static IEnumerable<Token> TransformTokenTypeMatched(this IEnumerable<Token> tokens,
@@ -68,8 +68,8 @@ namespace Liu233w.Compiler.CompilerFramework.Tokenizer
             {
                 if (token.TokenType == sourceTokenType)
                 {
-                    return new Token(token.Lexem,
-                        typeTable.Contains(token.Lexem) ? token.Lexem : unMatchedType,
+                    return new Token(token.Lexeme,
+                        typeTable.Contains(token.Lexeme) ? token.Lexeme : unMatchedType,
                         token.TokenBeginIdx, token.TokenEndIdx);
                 }
                 else
