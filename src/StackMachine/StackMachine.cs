@@ -31,6 +31,7 @@ namespace Liu233w.StackMachine
         /// 在当前的虚拟机上运行 Continuation
         /// </summary>
         /// <param name="continuation"></param>
+        /// <param name="input"></param>
         /// <returns></returns>
         public object RunWithContinuation(Continuation continuation, object input)
         {
