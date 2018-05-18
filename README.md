@@ -21,7 +21,3 @@
 - [./test/StackMachine](./test/StackMachine): 单元测试
 
 - [./实验课作业](./实验课作业) : 实验课题目要求及作业运行脚本（参见此路径下的 README）
-
-其他放在根目录的文件都是之前写的，以后会被重写并移动到 src 和 test 文件夹中。根目录目前包含：
-- LexicalAnalyzer[.Test]: 用 DFS+Continuation回溯 编写的语法分析器，时间复杂度 O(n^3)。由于 C# 不支持 Continuation，
-  所以我在这里面手工模拟了函数的调用栈来实现 CallCC。再扩充一下就可以分析上面生成的 Token 了。这个以后会被重写并放进 src 文件夹中。
