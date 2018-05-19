@@ -18,6 +18,6 @@
 - [./CodePiece](./CodePiece) 随笔，随堂作业（测试和代码放到一起了）
 
 - [./src/StackMachine](./src/StackMachine): 一个栈帧虚拟机，模拟了函数的调用栈，需要用侵入式的方式来使用。可以使用 call/cc
-- [./test/StackMachine](./test/StackMachine): 单元测试
+- [./test/StackMachine.Test](./test/StackMachine.Test): 单元测试
 
 - [./实验课作业](./实验课作业) : 实验课题目要求及作业运行脚本（参见此路径下的 README）
