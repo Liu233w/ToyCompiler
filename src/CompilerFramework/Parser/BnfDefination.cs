@@ -43,7 +43,7 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
         /// 终结符为 TokenType，也就是说，非终结符的命名不能与 TokenType 相同。
         /// </summary>
         /// <param name="nonTerminal">产生式前面的非终结符</param>
-        /// <param name="defination">产生式的推导规则。内容可以是终结符或非终结符，如果为空字符串，代表 ɛ；如果最后一个元素为 null，代表本条规则最后匹配结束符（生成本条规则的语法树之后消耗完所有的 token）</param>
+        /// <param name="defination">产生式的推导规则。内容可以是终结符或非终结符，可以使用 <see cref="TerminalConsts"/> 中定义的终结符</param>
         /// <returns></returns>
         public BnfDefination AddRule(string nonTerminal, string[] defination)
         {
@@ -154,13 +154,13 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
                         // 非终结符
                         var subSet = GetFirstSetForNonTerminal(symbol);
                         // 假如本符号是含有 ɛ 的非终结符，就应该继续遍历后面的符号
-                        if (subSet.Contains(string.Empty))
+                        if (subSet.Contains(TerminalConsts.Epsilon))
                         {
-                            var alreadyHaveEmptyString = set.Contains(string.Empty);
+                            var alreadyHaveEmptyString = set.Contains(TerminalConsts.Epsilon);
                             set.UnionWith(subSet);
                             if (!alreadyHaveEmptyString)
                             {
-                                set.Remove(string.Empty);
+                                set.Remove(TerminalConsts.Epsilon);
                             }
                         }
                         else
@@ -178,7 +178,7 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
                 }
 
                 // 遍历完了每个 symbol，都是非终结符且含有 ɛ
-                set.Add(string.Empty);
+                set.Add(TerminalConsts.Epsilon);
 
                 check_next_rule:;
             }

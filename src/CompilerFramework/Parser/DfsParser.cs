@@ -148,7 +148,7 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
                         // 是否到达末尾
                         if (_currentTokenIdx == _tokens.Count)
                         {
-                            if (_ruleList[_ruleIdx][_ruleItemIdx] == null)
+                            if (_ruleList[_ruleIdx][_ruleItemIdx] == TerminalConsts.EndOfFile)
                             {
                                 // 在规则中应该是末尾
                                 return GoTo(100);
@@ -160,7 +160,7 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
                             }
                         }
 
-                        if (_ruleList[_ruleIdx][_ruleItemIdx] == null)
+                        if (_ruleList[_ruleIdx][_ruleItemIdx] == TerminalConsts.EndOfFile)
                         {
                             // 在规则中应当到达末尾，但是目前没有到达末尾
                             ++_ruleIdx;

@@ -15,8 +15,8 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
         public DfsParserTest()
         {
             _defination = new BnfDefination()
-                    .AddRule("S", new[] { "a", "A", null })
-                    .AddRule("S", new[] { "c", "A", "d", null })
+                    .AddRule("S", new[] { "a", "A", TerminalConsts.EndOfFile })
+                    .AddRule("S", new[] { "c", "A", "d", TerminalConsts.EndOfFile })
                     .AddRule("A", new[] { "a" })
                     .AddRule("A", new[] { "a", "b" })
                 ;
@@ -53,7 +53,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
                     }, new[] {"a", "b"}),
                     new TerminalTree(new Token("d", "d", 3, 4)),
                     null,
-                }, new[] {"c", "A", "d", null}),
+                }, new[] {"c", "A", "d", TerminalConsts.EndOfFile}),
             };
 
             yield return new object[]
@@ -67,7 +67,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
                         new TerminalTree(new Token("a", "a", 1, 2)),
                     }, new[] {"a"}),
                     null,
-                }, new[] {"a", "A", null}),
+                }, new[] {"a", "A", TerminalConsts.EndOfFile}),
             };
 
             yield return new object[]
@@ -82,7 +82,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
                         new TerminalTree(new Token("b", "b", 2, 3)),
                     }, new[] {"a", "b"}),
                     null,
-                }, new[] {"a", "A", null}),
+                }, new[] {"a", "A", TerminalConsts.EndOfFile}),
             };
 
             yield return new object[]
@@ -97,7 +97,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
                     }, new[] {"a"}),
                     new TerminalTree(new Token("d", "d", 2, 3)),
                     null,
-                }, new[] {"c", "A", "d", null}),
+                }, new[] {"c", "A", "d", TerminalConsts.EndOfFile}),
 
             };
         }
