@@ -169,6 +169,13 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
                         else if (_bnfDefination.IsTerminal(_ruleList[_ruleIdx][_ruleItemIdx]))
                         {
                             // 根据规则，当前应该是终结符
+                            if (_ruleList[_ruleIdx][_ruleItemIdx] == TerminalConsts.Epsilon)
+                            {
+                                // 当前是 ɛ，跳过这一条
+                                _childs[_ruleItemIdx] = null;
+                                ++_ruleItemIdx;
+                                return GoTo(2);
+                            }
                             var currentToken = _tokens[_currentTokenIdx];
                             if (currentToken.TokenType == _ruleList[_ruleIdx][_ruleItemIdx])
                             {

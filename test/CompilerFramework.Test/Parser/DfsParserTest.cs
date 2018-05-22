@@ -12,6 +12,8 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
     {
         private BnfDefination _defination;
 
+        private BnfDefination _bnfDefinationWithEpsilon;
+
         public DfsParserTest()
         {
             _defination = new BnfDefination()
@@ -19,6 +21,12 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
                     .AddRule("S", new[] { "c", "A", "d", TerminalConsts.EndOfFile })
                     .AddRule("A", new[] { "a" })
                     .AddRule("A", new[] { "a", "b" })
+                ;
+
+            _bnfDefinationWithEpsilon = new BnfDefination()
+                    .AddRule("A", new[] { "0", "B", TerminalConsts.EndOfFile })
+                    .AddRule("B", new[] { "1", "A" })
+                    .AddRule("B", new[] { TerminalConsts.Epsilon })
                 ;
         }
 
@@ -114,6 +122,62 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
             var tokens = PrepareTokens(input);
             var result = DfsParser.Parse(tokens, _defination, "S");
             result.Should().Be(null);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetEpislonAssertions))]
+        public void 能够检测带ɛ的句子(string input, NonTerminalTree expected)
+        {
+            var tokens = PrepareTokens(input);
+            var result = DfsParser.Parse(tokens, _defination, "A");
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        public static IEnumerable<object[]> GetEpislonAssertions()
+        {
+            yield return new object[]
+            {
+                "0",
+                new NonTerminalTree("A", new ISyntacticAnalysisTree[]
+                {
+                    new TerminalTree(new Token("0", "0", 0,1)),
+                    new NonTerminalTree("B", new ISyntacticAnalysisTree[]
+                    {
+                        null
+                    }, new[] {TerminalConsts.Epsilon}),
+                }, new[] {"0", "B"}),
+            };
+
+            yield return new object[]
+            {
+                "01",
+                new NonTerminalTree("A", new ISyntacticAnalysisTree[]
+                {
+                    new TerminalTree(new Token("0", "0", 0, 1)),
+                    new NonTerminalTree("B", new ISyntacticAnalysisTree[]
+                    {
+                        new TerminalTree(new Token("1", "1", 1, 2)),
+                        new NonTerminalTree("A", new ISyntacticAnalysisTree[]
+                        {
+                            new TerminalTree(new Token("0", "0", 2, 3)),
+                            new NonTerminalTree("B", new ISyntacticAnalysisTree[]
+                            {
+                                null
+                            }, new[] {TerminalConsts.Epsilon}),
+                        }, new[] {"0", "B"}),
+                    }, new[] {"1", "A"}),
+                }, new[] {"0", "B"}),
+            };
+
+            yield return new object[]
+            {
+                "00", null
+            };
+
+            yield return new object[]
+            {
+                "1", null
+            };
         }
     }
 }
