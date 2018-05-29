@@ -13,6 +13,6 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
         /// <summary>
         /// 表示 ɛ
         /// </summary>
-        public const string Epsilon = "";
+        public static string[] Epsilon { get; } = { };
     }
 }

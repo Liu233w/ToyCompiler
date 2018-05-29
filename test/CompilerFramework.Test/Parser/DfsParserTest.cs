@@ -25,8 +25,8 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
 
             _bnfDefinationWithEpsilon = new BnfDefination()
                     .AddRule("A", new[] { "0", "B", TerminalConsts.EndOfFile })
-                    .AddRule("B", new[] { "1", "A" })
-                    .AddRule("B", new[] { TerminalConsts.Epsilon })
+                    .AddRule("B", new[] { "1", "B" })
+                    .AddRule("B", TerminalConsts.Epsilon)
                 ;
         }
 
@@ -144,7 +144,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
                     new NonTerminalTree("B", new ISyntacticAnalysisTree[]
                     {
                         null
-                    }, new[] {TerminalConsts.Epsilon}),
+                    }, TerminalConsts.Epsilon),
                 }, new[] {"0", "B"}),
             };
 
@@ -163,7 +163,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
                             new NonTerminalTree("B", new ISyntacticAnalysisTree[]
                             {
                                 null
-                            }, new[] {TerminalConsts.Epsilon}),
+                            }, TerminalConsts.Epsilon),
                         }, new[] {"0", "B"}),
                     }, new[] {"1", "A"}),
                 }, new[] {"0", "B"}),

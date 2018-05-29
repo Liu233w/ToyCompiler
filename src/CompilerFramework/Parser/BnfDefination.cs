@@ -43,7 +43,7 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
         /// 终结符为 TokenType，也就是说，非终结符的命名不能与 TokenType 相同。
         /// </summary>
         /// <param name="nonTerminal">产生式前面的非终结符</param>
-        /// <param name="defination">产生式的推导规则。内容可以是终结符或非终结符，可以使用 <see cref="TerminalConsts"/> 中定义的终结符</param>
+        /// <param name="defination">产生式的推导规则。内容可以是终结符或非终结符，可以使用 <see cref="TerminalConsts"/> 中定义的终结符；假如为空数组，则表示Epsilon</param>
         /// <returns></returns>
         public BnfDefination AddRule(string nonTerminal, string[] defination)
         {
@@ -110,81 +110,81 @@ namespace Liu233w.Compiler.CompilerFramework.Parser
             }
         }
 
-        /// <summary>
-        /// 构造语法规则的 First 集合、Follow 集合。
-        /// 只有非左递归的语法规则可以调用此方法。
-        /// </summary>
-        public void BuildAnalysisSet()
-        {
-            BuildContainedInField();
+        ///// <summary>
+        ///// 构造语法规则的 First 集合、Follow 集合。
+        ///// 只有非左递归的语法规则可以调用此方法。
+        ///// </summary>
+        //public void BuildAnalysisSet()
+        //{
+        //    BuildContainedInField();
 
-            // 构造 First 集合
-            FirstSet = new Dictionary<string, HashSet<string>>();
-            foreach (var nonTerminal in Rules.Keys)
-            {
-                // 相当于记忆化搜索
-                GetFirstSetForNonTerminal(nonTerminal);
-            }
+        //    // 构造 First 集合
+        //    FirstSet = new Dictionary<string, HashSet<string>>();
+        //    foreach (var nonTerminal in Rules.Keys)
+        //    {
+        //        // 相当于记忆化搜索
+        //        GetFirstSetForNonTerminal(nonTerminal);
+        //    }
 
-            // 构造 Follow 集合
-            throw new NotImplementedException();
-        }
+        //    // 构造 Follow 集合
+        //    throw new NotImplementedException();
+        //}
 
-        /// <summary>
-        /// 构造并保存某个非终结符的 First 集合，同时返回此集合。
-        /// 如果集合已经存在，则直接返回。
-        /// </summary>
-        /// <param name="nonTerminal"></param>
-        /// <returns></returns>
-        private HashSet<string> GetFirstSetForNonTerminal(string nonTerminal)
-        {
-            var setExisted = FirstSet.TryGetValue(nonTerminal, out var set);
-            if (setExisted) return set;
+        ///// <summary>
+        ///// 构造并保存某个非终结符的 First 集合，同时返回此集合。
+        ///// 如果集合已经存在，则直接返回。
+        ///// </summary>
+        ///// <param name="nonTerminal"></param>
+        ///// <returns></returns>
+        //private HashSet<string> GetFirstSetForNonTerminal(string nonTerminal)
+        //{
+        //    var setExisted = FirstSet.TryGetValue(nonTerminal, out var set);
+        //    if (setExisted) return set;
 
-            var nonTerminalRules = Rules[nonTerminal];
-            set = new HashSet<string>();
+        //    var nonTerminalRules = Rules[nonTerminal];
+        //    set = new HashSet<string>();
 
-            foreach (var rule in nonTerminalRules)
-            {
-                // 假如第一个符号是一个含有 ɛ 的非终结符，就应该继续遍历后面的符号
-                foreach (var symbol in rule)
-                {
-                    if (Rules.ContainsKey(symbol))
-                    {
-                        // 非终结符
-                        var subSet = GetFirstSetForNonTerminal(symbol);
-                        // 假如本符号是含有 ɛ 的非终结符，就应该继续遍历后面的符号
-                        if (subSet.Contains(TerminalConsts.Epsilon))
-                        {
-                            var alreadyHaveEmptyString = set.Contains(TerminalConsts.Epsilon);
-                            set.UnionWith(subSet);
-                            if (!alreadyHaveEmptyString)
-                            {
-                                set.Remove(TerminalConsts.Epsilon);
-                            }
-                        }
-                        else
-                        {
-                            // 个人感觉这里使用 goto 能提高可读性
-                            goto check_next_rule;
-                        }
-                    }
-                    else
-                    {
-                        // 终结符
-                        set.Add(rule[0]);
-                        goto check_next_rule;
-                    }
-                }
+        //    foreach (var rule in nonTerminalRules)
+        //    {
+        //        // 假如第一个符号是一个含有 ɛ 的非终结符，就应该继续遍历后面的符号
+        //        foreach (var symbol in rule)
+        //        {
+        //            if (Rules.ContainsKey(symbol))
+        //            {
+        //                // 非终结符
+        //                var subSet = GetFirstSetForNonTerminal(symbol);
+        //                // 假如本符号是含有 ɛ 的非终结符，就应该继续遍历后面的符号
+        //                if (subSet.Contains(TerminalConsts.Epsilon))
+        //                {
+        //                    var alreadyHaveEmptyString = set.Contains(TerminalConsts.Epsilon);
+        //                    set.UnionWith(subSet);
+        //                    if (!alreadyHaveEmptyString)
+        //                    {
+        //                        set.Remove(TerminalConsts.Epsilon);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    // 个人感觉这里使用 goto 能提高可读性
+        //                    goto check_next_rule;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                // 终结符
+        //                set.Add(rule[0]);
+        //                goto check_next_rule;
+        //            }
+        //        }
 
-                // 遍历完了每个 symbol，都是非终结符且含有 ɛ
-                set.Add(TerminalConsts.Epsilon);
+        //        // 遍历完了每个 symbol，都是非终结符且含有 ɛ
+        //        set.Add(TerminalConsts.Epsilon);
 
-                check_next_rule:;
-            }
+        //        check_next_rule:;
+        //    }
 
-            FirstSet[nonTerminal] = set;
-            return set;
-        }
+        //    FirstSet[nonTerminal] = set;
+        //    return set;
+        //}
     }
 }
