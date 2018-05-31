@@ -129,7 +129,7 @@ namespace Liu233w.Compiler.CompilerFramework.Test.Parser
         public void 能够检测带ɛ的句子(string input, NonTerminalTree expected)
         {
             var tokens = PrepareTokens(input);
-            var result = DfsParser.Parse(tokens, _defination, "A");
+            var result = DfsParser.Parse(tokens, _bnfDefinationWithEpsilon, "A");
             result.Should().BeEquivalentTo(expected);
         }
 
