@@ -1,3 +1,4 @@
+using System;
 using Liu233w.StackMachine.Instructions;
 
 namespace Liu233w.StackMachine
@@ -27,7 +28,7 @@ namespace Liu233w.StackMachine
 
         protected override FuncInstructionBase StepMove(int pc, object lastReturned)
         {
-            throw new System.NotImplementedException("不应该再调用此函数");
+            throw new InvalidOperationException("不应该再调用此函数");
         }
     }
 }
