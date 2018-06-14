@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
 
-namespace Liu233w.Compiler.EX1.libs
+namespace Liu233w.Compiler.EX1.Libs
 {
     /// <summary>
     /// 用于Ex1的词法分析器

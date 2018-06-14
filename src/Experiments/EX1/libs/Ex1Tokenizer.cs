@@ -4,7 +4,7 @@ using LanguageExt;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 
-namespace Liu233w.Compiler.EX1.libs
+namespace Liu233w.Compiler.EX1.Libs
 {
     public static class Ex1Tokenizer
     {

@@ -1,4 +1,4 @@
-namespace Liu233w.Compiler.EX1.libs
+namespace Liu233w.Compiler.EX1.Libs
 {
     /// <summary>
     /// 所有的标识符类型
