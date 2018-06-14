@@ -1,6 +1,6 @@
 using System.Linq;
 using Liu233w.Compiler.CompilerFramework.Test;
-using Liu233w.Compiler.EX1.libs;
+using Liu233w.Compiler.EX1.Libs;
 using Newtonsoft.Json;
 using Xunit;
 

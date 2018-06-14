@@ -4,7 +4,7 @@ using System.IO;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
 using Liu233w.Compiler.CompilerFramework.Tokenizer.Exceptions;
 using Liu233w.Compiler.CompilerFramework.Utils;
-using Liu233w.Compiler.EX1.libs;
+using Liu233w.Compiler.EX1.Libs;
 using Shouldly;
 
 namespace Liu233w.Compiler.EX1

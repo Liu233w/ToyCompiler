@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Liu233w.Compiler.CompilerFramework.Test;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
-using Liu233w.Compiler.EX1.libs;
+using Liu233w.Compiler.EX1.Libs;
 using Shouldly;
 using Xunit;
 
