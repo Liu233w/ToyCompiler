@@ -10,5 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CompilerFramework\CompilerFramework.csproj" />
+    <ProjectReference Include="..\EX1\EX1.csproj" />
   </ItemGroup>
 </Project>
