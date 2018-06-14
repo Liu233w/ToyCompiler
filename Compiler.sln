@@ -30,8 +30,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackMachine", "src\StackMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackMachine.Test", "test\StackMachine.Test\StackMachine.Test.csproj", "{567FB0AA-856F-4736-ABAC-C00B5C87FF92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EX2", "src\Experiments\EX2\EX2.csproj", "{61A12EB2-395F-499A-B22D-80DC557C1DF8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,10 +64,6 @@ Global
 		{567FB0AA-856F-4736-ABAC-C00B5C87FF92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{567FB0AA-856F-4736-ABAC-C00B5C87FF92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{567FB0AA-856F-4736-ABAC-C00B5C87FF92}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61A12EB2-395F-499A-B22D-80DC557C1DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61A12EB2-395F-499A-B22D-80DC557C1DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61A12EB2-395F-499A-B22D-80DC557C1DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61A12EB2-395F-499A-B22D-80DC557C1DF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,7 +77,6 @@ Global
 		{3FACC4F2-D0F7-4223-969C-4EF6E76FF785} = {41B5CAFE-125A-44EB-854A-963E5B86ED3A}
 		{F4842652-97D6-4FC7-8348-D257C9A7F485} = {88327648-80FB-4509-B7B6-A566A44052DC}
 		{567FB0AA-856F-4736-ABAC-C00B5C87FF92} = {FA856B0D-72EB-433A-921A-57B643F938F0}
-		{61A12EB2-395F-499A-B22D-80DC557C1DF8} = {FC420D72-0BE7-4443-9A1B-C7FB7AB37E96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E87FD7CA-605C-4BBE-B196-3B98AF5F2599}
