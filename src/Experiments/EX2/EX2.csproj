@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Liu233w.Compiler.EX2</AssemblyName>
     <RootNamespace>Liu233w.Compiler.EX2</RootNamespace>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="LanguageExt.Core" Version="3.0.16" />
+  </ItemGroup>
 </Project>
