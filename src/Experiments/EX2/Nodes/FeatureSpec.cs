@@ -1,4 +1,6 @@
-﻿namespace Liu233w.Compiler.EX2.Nodes
+﻿using Liu233w.Compiler.CompilerFramework.Tokenizer;
+
+namespace Liu233w.Compiler.EX2.Nodes
 {
     public abstract class FeatureSpec : NodeBase
     {
@@ -6,7 +8,7 @@
 
     public class PortSpec : FeatureSpec
     {
-        public string Identifier { get; set; }
+        public Token Identifier { get; set; }
 
         public IoType IoType { get; set; }
 
@@ -17,13 +19,13 @@
 
     public class ParameterSpec : FeatureSpec
     {
-        public string Identifier { get; set; }
+        public Token Identifier { get; set; }
 
         public IoType IoType { get; set; }
 
         public AssociationBlock Associations { get; set; }
 
-        public Reference Reference { get; set; }
+        public ReferenceBase Reference { get; set; }
     }
 
     public class NoneFeature : FeatureSpec

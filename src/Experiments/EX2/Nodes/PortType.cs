@@ -6,12 +6,12 @@
 
     public class DataPort : PortType
     {
-        public Reference Reference { get; set; }
+        public ReferenceBase Reference { get; set; }
     }
 
     public class EventDataPort : PortType
     {
-        public Reference Reference { get; set; }
+        public ReferenceBase Reference { get; set; }
     }
 
     public class EventPort : PortType
