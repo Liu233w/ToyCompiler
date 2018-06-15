@@ -1,5 +1,4 @@
-﻿using System;
-using Liu233w.Compiler.CompilerFramework.Tokenizer;
+﻿using Liu233w.Compiler.CompilerFramework.Tokenizer;
 
 namespace Liu233w.Compiler.EX2.Nodes
 {

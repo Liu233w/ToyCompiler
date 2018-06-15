@@ -4,6 +4,6 @@
     {
         In,
         Out,
-        InOut,
+        InOut
     }
 }
