@@ -38,6 +38,6 @@ namespace Liu233w.Compiler.EX2.Nodes
 
     public class AssociationBlock
     {
-        public LinkedList<Association> Associations { get; set; }
+        public ICollection<AssociationBase> Associations { get; set; }
     }
 }
