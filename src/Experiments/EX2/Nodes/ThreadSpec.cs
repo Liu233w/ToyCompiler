@@ -1,10 +1,11 @@
 ﻿using System;
+using Liu233w.Compiler.CompilerFramework.Tokenizer;
 
 namespace Liu233w.Compiler.EX2.Nodes
 {
-    public class ThreadSpec
+    public class ThreadSpec : NodeBase
     {
-        public string Identifier { get; set; }
+        public Token Identifier { get; set; }
 
         public FeatureSpec Features { get; set; }
 

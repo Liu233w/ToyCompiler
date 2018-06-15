@@ -1,8 +1,6 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Liu233w.Compiler.EX2.Nodes
+﻿namespace Liu233w.Compiler.EX2.Nodes
 {
-    public abstract class FeatureSpec
+    public abstract class FeatureSpec : NodeBase
     {
     }
 

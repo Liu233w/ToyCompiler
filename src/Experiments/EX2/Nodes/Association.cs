@@ -2,7 +2,7 @@
 
 namespace Liu233w.Compiler.EX2.Nodes
 {
-    public abstract class AssociationBase
+    public abstract class AssociationBase : NodeBase
     {
     }
 
@@ -26,14 +26,14 @@ namespace Liu233w.Compiler.EX2.Nodes
     public enum Splitter
     {
         /// <summary>
-        /// =>
+        ///     =>
         /// </summary>
         Arrow,
 
         /// <summary>
-        /// +=>
+        ///     +=>
         /// </summary>
-        PlusArrow,
+        PlusArrow
     }
 
     public class AssociationBlock

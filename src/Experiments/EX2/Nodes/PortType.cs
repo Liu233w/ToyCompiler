@@ -1,6 +1,6 @@
 ﻿namespace Liu233w.Compiler.EX2.Nodes
 {
-    public abstract class PortType
+    public abstract class PortType : NodeBase
     {
     }
 

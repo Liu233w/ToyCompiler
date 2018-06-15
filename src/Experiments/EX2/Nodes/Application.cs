@@ -2,7 +2,7 @@
 
 namespace Liu233w.Compiler.EX2.Nodes
 {
-    public class Application
+    public class Application : NodeBase
     {
         public ICollection<ThreadSpec> Threads { get; set; }
     }

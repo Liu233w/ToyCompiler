@@ -2,10 +2,10 @@
 
 namespace Liu233w.Compiler.EX2.Nodes
 {
-    public class Reference : NodeBase
+    public class PackageName : NodeBase
     {
-        public PackageName PackageName { get; set; }
-        
         public Token Identifier { get; set; }
+        
+        public PackageName Parent { get; set; }
     }
 }
