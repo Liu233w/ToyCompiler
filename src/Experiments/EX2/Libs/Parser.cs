@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -564,6 +564,7 @@ namespace Liu233w.Compiler.EX2.Libs
         {
             foreach (var type in resumeableTypes)
             {
+                _resumeTable.TryAdd(type, 0);
                 ++_resumeTable[type];
             }
 
@@ -589,7 +590,7 @@ namespace Liu233w.Compiler.EX2.Libs
                         // 就是这个函数中标注的 token
                         return false;
                     }
-                    else if (_resumeTable[tokenType] > 0)
+                    else if (_resumeTable.TryGetValue(tokenType, out var num) && num > 0)
                     {
                         // 之前的函数中有这个，应当恢复到之前的状态
                         throw;
@@ -655,7 +656,7 @@ namespace Liu233w.Compiler.EX2.Libs
             {
                 return _tokens[_index];
             }
-            catch (IndexOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 throw Error(new NotEnoughTokenException("Token不够", null, null));
             }
@@ -667,7 +668,7 @@ namespace Liu233w.Compiler.EX2.Libs
             {
                 return _tokens[_index + num];
             }
-            catch (IndexOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 throw Error(new NotEnoughTokenException("Token不够", null, null));
             }
