@@ -67,11 +67,12 @@ namespace EX2
 
         private static void HandleAst(Application application)
         {
-            var res = JsonConvert.SerializeObject(new JsonSerializerSettings
+            var res = JsonConvert.SerializeObject(application, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
+                Formatting = Formatting.Indented,
             });
-            
+
             Console.WriteLine(res);
         }
 

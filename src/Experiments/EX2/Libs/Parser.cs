@@ -50,11 +50,15 @@ namespace Liu233w.Compiler.EX2.Libs
             {
                 while (HaveNextToken())
                 {
-                    var thread = HandleThread();
+                    ThreadSpec thread = null;
+                    TryParseAndResumeToToken(() =>
+                    {
+                        thread = HandleThread();
+                    }, TokenTypes.Thread);
                     _parsed.AddLast(thread);
                 }
             }
-            catch (NotEnoughTokenException e)
+            catch (NotEnoughTokenException)
             {
             }
 
@@ -91,11 +95,11 @@ namespace Liu233w.Compiler.EX2.Libs
                 {
                     throw Error(new SemanticException("The Identifier in Thread must be matched.", token, thread));
                 }
+                Consume();
+            }, TokenTypes.Semicolon);
 
-                ConsumeType(TokenTypes.Semicolon);
-            }, "thread");
-
-            thread.EndPosition = LookAhead(-1).TokenEndIdx;
+            var endToken = ConsumeType(TokenTypes.Semicolon);
+            thread.EndPosition = endToken.TokenEndIdx;
             return thread;
         }
 
@@ -116,6 +120,11 @@ namespace Liu233w.Compiler.EX2.Libs
 
             TryParseAndResumeToToken(() => { association = HandleAssociation(); },
                 TokenTypes.Semicolon);
+            var token = ConsumeType(TokenTypes.Semicolon);
+            if (association != null)
+            {
+                association.EndPosition = token.TokenEndIdx;
+            }
 
             return association;
         }
@@ -223,7 +232,7 @@ namespace Liu233w.Compiler.EX2.Libs
 
         private FeatureSpec HandleFeatures()
         {
-            if (ThisToken().Match(TokenTypes.Features))
+            if (!ThisToken().Match(TokenTypes.Features))
             {
                 return new NoneFeature
                 {
@@ -481,10 +490,12 @@ namespace Liu233w.Compiler.EX2.Libs
                 if (ThisToken().Match(TokenTypes.Arraw1))
                 {
                     association.Splitter = Splitter.Arrow;
+                    Consume();
                 }
                 else if (ThisToken().Match(TokenTypes.Arraw2))
                 {
                     association.Splitter = Splitter.PlusArrow;
+                    Consume();
                 }
                 else
                 {
