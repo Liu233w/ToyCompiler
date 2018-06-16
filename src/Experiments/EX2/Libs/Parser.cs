@@ -12,6 +12,12 @@ namespace Liu233w.Compiler.EX2.Libs
 {
     public class Parser
     {
+        public static (Application, ICollection<ParseException>) Parse(IList<Token> tokens)
+        {
+            var parser = new Parser(tokens);
+            return parser.DoParse();
+        }
+
         private readonly IList<Token> _tokens;
 
         private int _index;
@@ -22,7 +28,7 @@ namespace Liu233w.Compiler.EX2.Libs
 
         private readonly Dictionary<string, int> _resumeTable;
 
-        public Parser(IList<Token> tokens)
+        private Parser(IList<Token> tokens)
         {
             _tokens = tokens;
             _index = 0;
@@ -31,7 +37,7 @@ namespace Liu233w.Compiler.EX2.Libs
             _resumeTable = new Dictionary<string, int>();
         }
 
-        public (Application, ICollection<ParseException>) Parse()
+        private (Application, ICollection<ParseException>) DoParse()
         {
             var application = new Application
             {
@@ -93,9 +99,131 @@ namespace Liu233w.Compiler.EX2.Libs
             return thread;
         }
 
+        private AssociationBase HandleProperties()
+        {
+            if (!ThisToken().Match(TokenTypes.Properties))
+            {
+                return new NoneAssociation
+                {
+                    BeginPosition = ThisToken().TokenBeginIdx,
+                    EndPosition = ThisToken().TokenBeginIdx,
+                };
+            }
+
+            Consume();
+
+            AssociationBase association = null;
+
+            TryParseAndResumeToToken(() => { association = HandleAssociation(); },
+                TokenTypes.Semicolon);
+
+            return association;
+        }
+
+        private FlowSpec HandleFlows()
+        {
+            if (!ThisToken().Match(TokenTypes.Flows))
+            {
+                return new NoneFlowSpec
+                {
+                    BeginPosition = ThisToken().TokenBeginIdx,
+                    EndPosition = ThisToken().TokenEndIdx
+                };
+            }
+
+            Consume();
+            FlowSpec spec = null;
+
+            TryParseAndResumeToToken(() =>
+            {
+                if (ThisToken().Match(TokenTypes.None))
+                {
+                    spec = new NoneFlowSpec
+                    {
+                        BeginPosition = ThisToken().TokenBeginIdx
+                    };
+                    Consume();
+                    return;
+                }
+
+                switch (LookAhead(3).TokenType)
+                {
+                    case TokenTypes.Source:
+                        var flowSourceSpec = new FlowSourceSpec
+                        {
+                            BeginPosition = ThisToken().TokenBeginIdx
+                        };
+                        spec = flowSourceSpec;
+                        HandleFlowSourceSpec(flowSourceSpec);
+                        break;
+                    case TokenTypes.Sink:
+                        var flowSinkSpec = new FlowSinkSpec
+                        {
+                            BeginPosition = ThisToken().TokenBeginIdx
+                        };
+                        spec = flowSinkSpec;
+                        HandleFlowSinkSpec(flowSinkSpec);
+                        break;
+                    case TokenTypes.Path:
+                        var flowPathSpec = new FlowPathSpec
+                        {
+                            BeginPosition = ThisToken().TokenBeginIdx
+                        };
+                        spec = flowPathSpec;
+                        HandleFlowPathSpec(flowPathSpec);
+                        break;
+                    default:
+                        throw Error(new GrammarException("Expect source, sink or path", LookAhead(3), null));
+                }
+            }, TokenTypes.Semicolon);
+
+            var token = ConsumeType(TokenTypes.Semicolon);
+            if (spec != null)
+            {
+                spec.EndPosition = token.TokenEndIdx;
+            }
+
+            return spec;
+        }
+
+        private void HandleFlowPathSpec(FlowPathSpec flowPathSpec)
+        {
+            flowPathSpec.PreIdentifier = ConsumeType(TokenTypes.Identifier);
+            ConsumeType(TokenTypes.SingleColon);
+            ConsumeType(TokenTypes.Flow);
+            Consume();
+
+            flowPathSpec.Identifier = ConsumeType(TokenTypes.Identifier);
+
+            ConsumeType(TokenTypes.Arraw3);
+            flowPathSpec.DestIdentifier = ConsumeType(TokenTypes.Identifier);
+        }
+
+        private void HandleFlowSinkSpec(FlowSinkSpec flowSinkSpec)
+        {
+            flowSinkSpec.PreIdentifier = ConsumeType(TokenTypes.Identifier);
+            ConsumeType(TokenTypes.SingleColon);
+            ConsumeType(TokenTypes.Flow);
+            Consume();
+
+            flowSinkSpec.Identifier = ConsumeType(TokenTypes.Identifier);
+            flowSinkSpec.Associations = TryHandleAssociationBlock();
+        }
+
+        private void HandleFlowSourceSpec(FlowSourceSpec flowSourceSpec)
+        {
+            flowSourceSpec.PreIdentifier = ConsumeType(TokenTypes.Identifier);
+            ConsumeType(TokenTypes.SingleColon);
+            ConsumeType(TokenTypes.Flow);
+            Consume();
+
+            flowSourceSpec.Identifier = ConsumeType(TokenTypes.Identifier);
+            flowSourceSpec.Associations = TryHandleAssociationBlock();
+        }
+
         private FeatureSpec HandleFeatures()
         {
-            if (ThisToken().TokenType != TokenTypes.Features)
+            if (ThisToken().Match(TokenTypes.Features))
             {
                 return new NoneFeature
                 {
@@ -105,53 +233,67 @@ namespace Liu233w.Compiler.EX2.Libs
             }
 
             Consume();
-
-            // IOType 可能有两个 Token，所以要考虑这两种情况
-            if (LookAhead(3).Match(TokenTypes.Parameter) || LookAhead(4).Match(TokenTypes.Parameter))
-            {
-                return HandleParameterSpec();
-            }
-            else
-            {
-                return HandlePortSpec();
-            }
-        }
-
-        private PortSpec HandlePortSpec()
-        {
-            var portSpec = new PortSpec
-            {
-                BeginPosition = ThisToken().TokenBeginIdx,
-            };
+            FeatureSpec spec = null;
 
             TryParseAndResumeToToken(() =>
             {
-                TryParseAndResumeToToken(() =>
+                if (ThisToken().Match(TokenTypes.None))
                 {
-                    // Identifier
-                    portSpec.Identifier = ConsumeType(TokenTypes.Identifier);
-                }, TokenTypes.SingleColon);
+                    spec = new NoneFeature
+                    {
+                        BeginPosition = ThisToken().TokenBeginIdx,
+                    };
 
-                TryParseAndResumeToToken(() =>
+                    Consume();
+                    return;
+                }
+
+                // IOType 可能有两个 Token，所以要考虑这两种情况
+                if (LookAhead(3).Match(TokenTypes.Parameter) || LookAhead(4).Match(TokenTypes.Parameter))
                 {
-                    ConsumeType(TokenTypes.SingleColon);
-                    portSpec.IoType = HandleIoType();
-                }, TokenTypes.Data, TokenTypes.Event);
-
-                portSpec.PortType = HandlePortType();
-
-                if (ThisToken().Match(TokenTypes.LeftBrace))
-                {
-                    portSpec.Associations = HandleAssociationBlock();
+                    var parameterSpec = new ParameterSpec
+                    {
+                        BeginPosition = ThisToken().TokenBeginIdx,
+                    };
+                    spec = parameterSpec;
+                    HandleParameterSpec(parameterSpec);
                 }
                 else
                 {
-                    portSpec.Associations = new AssociationBlock
+                    var portSpec = new PortSpec
                     {
-                        Associations = new AssociationBase[] { },
+                        BeginPosition = ThisToken().TokenBeginIdx,
                     };
+                    spec = portSpec;
+                    HandlePortSpec(portSpec);
                 }
             }, TokenTypes.Semicolon);
+
+            var token = ConsumeType(TokenTypes.Semicolon);
+            if (spec != null)
+            {
+                spec.EndPosition = token.TokenEndIdx;
+            }
+
+            return spec;
+        }
+
+        private void HandlePortSpec(PortSpec portSpec)
+        {
+            TryParseAndResumeToToken(() =>
+            {
+                // Identifier
+                portSpec.Identifier = ConsumeType(TokenTypes.Identifier);
+            }, TokenTypes.SingleColon);
+
+            TryParseAndResumeToToken(() =>
+            {
+                ConsumeType(TokenTypes.SingleColon);
+                portSpec.IoType = HandleIoType(portSpec);
+            }, TokenTypes.Data, TokenTypes.Event);
+
+            portSpec.PortType = HandlePortType();
+            portSpec.Associations = TryHandleAssociationBlock();
         }
 
         private PortType HandlePortType()
@@ -207,7 +349,8 @@ namespace Liu233w.Compiler.EX2.Libs
                     }
                 }
                 default:
-                    throw Error(new GrammarException("Expect 'data port', 'event data port' or 'event port'",
+                    throw Error(new GrammarException(
+                        "Expect 'parameter', 'data port', 'event data port' or 'event port'",
                         ThisToken(), null));
             }
         }
@@ -228,7 +371,7 @@ namespace Liu233w.Compiler.EX2.Libs
             }
         }
 
-        private IoType HandleIoType()
+        private IoType HandleIoType(NodeBase node)
         {
             switch (ThisToken().TokenType)
             {
@@ -251,56 +394,42 @@ namespace Liu233w.Compiler.EX2.Libs
                     }
                 }
                 default:
-                    throw Error(new GrammarException("Expect in/out/in out", ThisToken(), spec));
+                    throw Error(new GrammarException("Expect in/out/in out", ThisToken(), node));
             }
         }
 
-        private ParameterSpec HandleParameterSpec()
+        private void HandleParameterSpec(ParameterSpec spec)
         {
-            var spec = new ParameterSpec
+            TryParseAndResumeToToken(() =>
             {
-                BeginPosition = ThisToken().TokenBeginIdx,
-            };
+                // identifier
+                spec.Identifier = ConsumeType(TokenTypes.Identifier);
+            }, TokenTypes.SingleColon);
 
             TryParseAndResumeToToken(() =>
             {
-                TryParseAndResumeToToken(() =>
-                {
-                    // identifier
-                    spec.Identifier = ConsumeType(TokenTypes.Identifier);
-                }, TokenTypes.SingleColon);
+                ConsumeType(TokenTypes.SingleColon);
+                spec.IoType = HandleIoType(spec);
+            }, TokenTypes.Parameter);
 
-                TryParseAndResumeToToken(() =>
-                {
-                    ConsumeType(TokenTypes.SingleColon);
-                    spec.IoType = HandleIoType();
-                }, TokenTypes.Parameter);
+            ConsumeType(TokenTypes.Parameter);
 
-                ConsumeType(TokenTypes.Parameter);
-
-                spec.Reference = TryHandleReferenceOrNone();
-
-                if (ThisToken().Match(TokenTypes.LeftBrace))
-                {
-                    spec.Associations = HandleAssociationBlock();
-                }
-                else
-                {
-                    spec.Associations = new AssociationBlock
-                    {
-                        Associations = new AssociationBase[] { },
-                    };
-                }
-            }, TokenTypes.Semicolon);
-
-            var token = ConsumeType(TokenTypes.Semicolon);
-            spec.EndPosition = token.TokenEndIdx;
-
-            return spec;
+            spec.Reference = TryHandleReferenceOrNone();
+            spec.Associations = TryHandleAssociationBlock();
         }
 
-        private AssociationBlock HandleAssociationBlock()
+        private AssociationBlock TryHandleAssociationBlock()
         {
+            if (!ThisToken().Match(TokenTypes.LeftBrace))
+            {
+                return new AssociationBlock
+                {
+                    BeginPosition = ThisToken().TokenBeginIdx,
+                    EndPosition = ThisToken().TokenBeginIdx,
+                    Associations = new AssociationBase[] { },
+                };
+            }
+
             var associations = new LinkedList<AssociationBase>();
             var associationBlock = new AssociationBlock
             {

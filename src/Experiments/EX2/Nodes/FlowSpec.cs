@@ -32,4 +32,8 @@ namespace Liu233w.Compiler.EX2.Nodes
 
         public Token DestIdentifier { get; set; }
     }
+
+    public class NoneFlowSpec : FlowSpec
+    {
+    }
 }
