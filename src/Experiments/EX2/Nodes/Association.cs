@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using LanguageExt;
+using LanguageExt.TypeClasses;
+using Liu233w.Compiler.CompilerFramework.Tokenizer;
 
 namespace Liu233w.Compiler.EX2.Nodes
 {
@@ -8,15 +11,15 @@ namespace Liu233w.Compiler.EX2.Nodes
 
     public class Association : AssociationBase
     {
-        public string PreIdentifier { get; set; }
+        public Option<Token> PreIdentifier { get; set; }
 
-        public string Identifier { get; set; }
+        public Token Identifier { get; set; }
 
         public Splitter Splitter { get; set; }
 
         public bool Constant { get; set; }
 
-        public string Decimal { get; set; }
+        public Token Decimal { get; set; }
     }
 
     public class NoneAssociation : AssociationBase
@@ -36,7 +39,7 @@ namespace Liu233w.Compiler.EX2.Nodes
         PlusArrow
     }
 
-    public class AssociationBlock
+    public class AssociationBlock : NodeBase
     {
         public ICollection<AssociationBase> Associations { get; set; }
     }

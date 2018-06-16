@@ -13,7 +13,7 @@ namespace Liu233w.Compiler.EX2.Libs
             return token.TokenType == type;
         }
 
-        public static bool Match(this Token token, params string[] types)
+        public static bool MatchAny(this Token token, params string[] types)
         {
             return types.Any(type => token.TokenType == type);
         }
