@@ -207,7 +207,8 @@ namespace Liu233w.Compiler.EX2.Libs
                     }
                 }
                 default:
-                    throw Error(new GrammarException("Expect 'data port', 'event data port' or '"))
+                    throw Error(new GrammarException("Expect 'data port', 'event data port' or 'event port'",
+                        ThisToken(), null));
             }
         }
 
