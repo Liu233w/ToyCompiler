@@ -51,10 +51,7 @@ namespace Liu233w.Compiler.EX2.Libs
                 while (HaveNextToken())
                 {
                     ThreadSpec thread = null;
-                    TryParseAndResumeToToken(() =>
-                    {
-                        thread = HandleThread();
-                    }, TokenTypes.Thread);
+                    TryParseAndResumeToToken(() => { thread = HandleThread(); }, TokenTypes.Thread);
                     _parsed.AddLast(thread);
                 }
             }
@@ -95,6 +92,7 @@ namespace Liu233w.Compiler.EX2.Libs
                 {
                     throw Error(new SemanticException("The Identifier in Thread must be matched.", token, thread));
                 }
+
                 Consume();
             }, TokenTypes.Semicolon);
 
@@ -455,8 +453,7 @@ namespace Liu233w.Compiler.EX2.Libs
                 }
             }, TokenTypes.RightBrace);
 
-            associationBlock.EndPosition = ThisToken().TokenEndIdx;
-            ConsumeType(TokenTypes.RightBrace);
+            associationBlock.EndPosition = ConsumeType(TokenTypes.RightBrace).TokenEndIdx;
 
             return associationBlock;
         }
@@ -516,6 +513,7 @@ namespace Liu233w.Compiler.EX2.Libs
             ConsumeType(TokenTypes.Access);
 
             association.Decimal = ConsumeType(TokenTypes.Decimal);
+            association.EndPosition = association.Decimal.TokenEndIdx;
 
             return association;
         }
