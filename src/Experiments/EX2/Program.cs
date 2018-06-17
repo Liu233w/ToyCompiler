@@ -11,6 +11,7 @@ using Liu233w.Compiler.EX2.Libs;
 using Liu233w.Compiler.EX2.Nodes;
 using Shouldly;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace EX2
 {
@@ -67,11 +68,12 @@ namespace EX2
 
         private static void HandleAst(Application application)
         {
-            var res = JsonConvert.SerializeObject(application, new JsonSerializerSettings
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.All,
                 Formatting = Formatting.Indented,
-            });
+            };
+            jsonSerializerSettings.Converters.Add(new StringEnumConverter {CamelCaseText = true});
+            var res = JsonConvert.SerializeObject(application, jsonSerializerSettings);
 
             Console.WriteLine(res);
         }

@@ -11,9 +11,12 @@ namespace Liu233w.Compiler.EX2.Nodes
         public PackageNameBase PackageName { get; set; }
         
         public Token Identifier { get; set; }
+
+        public override string @Type { get; } = nameof(Reference);
     }
 
     public class NoneReference : ReferenceBase
     {
+        public override string @Type { get; } = nameof(NoneReference);
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using LanguageExt;
 using LanguageExt.TypeClasses;
 using Liu233w.Compiler.CompilerFramework.Tokenizer;
+using Newtonsoft.Json;
 
 namespace Liu233w.Compiler.EX2.Nodes
 {
@@ -20,10 +22,13 @@ namespace Liu233w.Compiler.EX2.Nodes
         public bool Constant { get; set; }
 
         public Token Decimal { get; set; }
+
+        public override string Type { get; } = nameof(Association);
     }
 
     public class NoneAssociation : AssociationBase
     {
+        public override string Type { get; } = nameof(NoneAssociation);
     }
 
     public enum Splitter
@@ -31,16 +36,18 @@ namespace Liu233w.Compiler.EX2.Nodes
         /// <summary>
         ///     =>
         /// </summary>
-        Arrow,
+        [EnumMember(Value = "=>")] Arrow,
 
         /// <summary>
         ///     +=>
         /// </summary>
-        PlusArrow
+        [EnumMember(Value = "+=>")] PlusArrow
     }
 
     public class AssociationBlock : NodeBase
     {
         public ICollection<AssociationBase> Associations { get; set; }
+
+        public override string Type { get; } = nameof(AssociationBlock);
     }
 }

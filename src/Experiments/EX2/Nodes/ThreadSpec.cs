@@ -11,5 +11,7 @@ namespace Liu233w.Compiler.EX2.Nodes
         public FlowSpec Flows { get; set; }
 
         public AssociationBase Properties { get; set; }
+
+        public override string Type { get; } = nameof(ThreadSpec);
     }
 }

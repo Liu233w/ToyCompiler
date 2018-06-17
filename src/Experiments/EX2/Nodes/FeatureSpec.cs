@@ -15,6 +15,8 @@ namespace Liu233w.Compiler.EX2.Nodes
         public AssociationBlock Associations { get; set; }
 
         public PortType PortType { get; set; }
+
+        public override string Type { get; } = nameof(PortSpec);
     }
 
     public class ParameterSpec : FeatureSpec
@@ -26,9 +28,12 @@ namespace Liu233w.Compiler.EX2.Nodes
         public AssociationBlock Associations { get; set; }
 
         public ReferenceBase Reference { get; set; }
+
+        public override string Type { get; } = nameof(ParameterSpec);
     }
 
     public class NoneFeature : FeatureSpec
     {
+        public override string Type { get; } = nameof(NoneFeature);
     }
 }

@@ -13,6 +13,8 @@ namespace Liu233w.Compiler.EX2.Nodes
         public Token Identifier { get; set; }
 
         public AssociationBlock Associations { get; set; }
+
+        public override string Type { get; } = nameof(FlowSourceSpec);
     }
 
     public class FlowSinkSpec : FlowSpec
@@ -22,6 +24,8 @@ namespace Liu233w.Compiler.EX2.Nodes
         public Token Identifier { get; set; }
 
         public AssociationBlock Associations { get; set; }
+
+        public override string Type { get; } = nameof(FlowSinkSpec);
     }
 
     public class FlowPathSpec : FlowSpec
@@ -31,9 +35,12 @@ namespace Liu233w.Compiler.EX2.Nodes
         public Token Identifier { get; set; }
 
         public Token DestIdentifier { get; set; }
+
+        public override string Type { get; } = nameof(FlowPathSpec);
     }
 
     public class NoneFlowSpec : FlowSpec
     {
+        public override string Type { get; } = nameof(NoneFlowSpec);
     }
 }
