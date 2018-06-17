@@ -134,7 +134,7 @@ namespace Liu233w.Compiler.EX2.Libs
                 return new NoneFlowSpec
                 {
                     BeginPosition = ThisToken().TokenBeginIdx,
-                    EndPosition = ThisToken().TokenEndIdx
+                    EndPosition = ThisToken().TokenBeginIdx
                 };
             }
 
@@ -235,7 +235,7 @@ namespace Liu233w.Compiler.EX2.Libs
                 return new NoneFeature
                 {
                     BeginPosition = ThisToken().TokenBeginIdx,
-                    EndPosition = ThisToken().TokenEndIdx
+                    EndPosition = ThisToken().TokenBeginIdx
                 };
             }
 
