@@ -59,11 +59,10 @@ namespace EX2
             if (parseExceptions.Any())
             {
                 HandleParseError(parseExceptions, fixer);
+                Console.WriteLine("源代码含有语法错误，本程序只生成了部分的ast：");
             }
-            else
-            {
-                HandleAst(application);
-            }
+
+            HandleAst(application);
         }
 
         private static void HandleAst(Application application)
@@ -71,6 +70,7 @@ namespace EX2
             var jsonSerializerSettings = new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Include,
             };
             jsonSerializerSettings.Converters.Add(new StringEnumConverter {CamelCaseText = true});
             var res = JsonConvert.SerializeObject(application, jsonSerializerSettings);
