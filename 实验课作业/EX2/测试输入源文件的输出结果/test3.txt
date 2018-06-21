@@ -1,0 +1,40 @@
+无法识别的词法单元：
+
+在 1:15 处：
+
+thread Thread1#
+              ^
+
+在 3:2 处：
+
+ _APPosition_Input : in event data port Nav_Types::Position_GPS;
+ ^
+
+在 5:10 处：
+
+        1flow1: flow path signal -> result1;
+        |^
+        --
+
+在 23:34 处：
+
+        flow1: flow path signal +> result1;
+                                |^
+                                --
+
+在 23:34 处：
+
+        flow1: flow path signal +> result1;
+                                 ^
+
+在 34:30 处：
+
+ dispatch_protocol => access .01;
+                             ^
+
+在 34:33 处：
+
+ dispatch_protocol => access .01;
+                              | ^
+                              ---
+

@@ -1,0 +1,706 @@
+{
+  "@AstType": "Application",
+  "Threads": [
+    {
+      "@AstType": "ThreadSpec",
+      "Identifier": {
+        "Lexeme": "Thread1",
+        "TokenType": "identifier",
+        "TokenBeginIdx": 7,
+        "TokenEndIdx": 14
+      },
+      "Features": {
+        "@AstType": "PortSpec",
+        "Identifier": {
+          "Lexeme": "AP_Position_Input",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 27,
+          "TokenEndIdx": 44
+        },
+        "IoType": "in",
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [],
+          "BeginPosition": 89,
+          "EndPosition": 89
+        },
+        "PortType": {
+          "@AstType": "EventDataPort",
+          "Reference": {
+            "@AstType": "Reference",
+            "PackageName": {
+              "@AstType": "PackageName",
+              "Identifiers": [
+                {
+                  "Lexeme": "Nav_Types",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 66,
+                  "TokenEndIdx": 75
+                }
+              ],
+              "BeginPosition": 66,
+              "EndPosition": 77
+            },
+            "Identifier": {
+              "Lexeme": "Position_GPS",
+              "TokenType": "identifier",
+              "TokenBeginIdx": 77,
+              "TokenEndIdx": 89
+            },
+            "BeginPosition": 66,
+            "EndPosition": 89
+          },
+          "BeginPosition": 50,
+          "EndPosition": 89
+        },
+        "BeginPosition": 27,
+        "EndPosition": 90
+      },
+      "Flows": {
+        "@AstType": "FlowPathSpec",
+        "PreIdentifier": {
+          "Lexeme": "flow1",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 107,
+          "TokenEndIdx": 112
+        },
+        "Identifier": {
+          "Lexeme": "signal",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 124,
+          "TokenEndIdx": 130
+        },
+        "DestIdentifier": {
+          "Lexeme": "result1",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 134,
+          "TokenEndIdx": 141
+        },
+        "BeginPosition": 107,
+        "EndPosition": 142
+      },
+      "Properties": {
+        "@AstType": "Association",
+        "PreIdentifier": [],
+        "Identifier": {
+          "Lexeme": "dispatch_protocol",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 157,
+          "TokenEndIdx": 174
+        },
+        "Splitter": "=>",
+        "Constant": false,
+        "Decimal": {
+          "Lexeme": "50.0",
+          "TokenType": "decimal",
+          "TokenBeginIdx": 185,
+          "TokenEndIdx": 189
+        },
+        "BeginPosition": 157,
+        "EndPosition": 190
+      },
+      "BeginPosition": 0,
+      "EndPosition": 204
+    },
+    {
+      "@AstType": "ThreadSpec",
+      "Identifier": {
+        "Lexeme": "Thread_2",
+        "TokenType": "identifier",
+        "TokenBeginIdx": 215,
+        "TokenEndIdx": 223
+      },
+      "Features": {
+        "@AstType": "PortSpec",
+        "Identifier": {
+          "Lexeme": "AP_Position_Input",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 236,
+          "TokenEndIdx": 253
+        },
+        "IoType": "in",
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [],
+          "BeginPosition": 305,
+          "EndPosition": 305
+        },
+        "PortType": {
+          "@AstType": "DataPort",
+          "Reference": {
+            "@AstType": "Reference",
+            "PackageName": {
+              "@AstType": "PackageName",
+              "Identifiers": [
+                {
+                  "Lexeme": "Nav_Types1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 269,
+                  "TokenEndIdx": 279
+                },
+                {
+                  "Lexeme": "Nav_Types2",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 281,
+                  "TokenEndIdx": 291
+                }
+              ],
+              "BeginPosition": 269,
+              "EndPosition": 293
+            },
+            "Identifier": {
+              "Lexeme": "Position_GPS",
+              "TokenType": "identifier",
+              "TokenBeginIdx": 293,
+              "TokenEndIdx": 305
+            },
+            "BeginPosition": 269,
+            "EndPosition": 305
+          },
+          "BeginPosition": 259,
+          "EndPosition": 305
+        },
+        "BeginPosition": 236,
+        "EndPosition": 306
+      },
+      "Flows": {
+        "@AstType": "FlowSourceSpec",
+        "PreIdentifier": {
+          "Lexeme": "flow1",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 323,
+          "TokenEndIdx": 328
+        },
+        "Identifier": {
+          "Lexeme": "signal",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 342,
+          "TokenEndIdx": 348
+        },
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [
+            {
+              "@AstType": "Association",
+              "PreIdentifier": [
+                {
+                  "Lexeme": "result1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 350,
+                  "TokenEndIdx": 357
+                }
+              ],
+              "Identifier": {
+                "Lexeme": "result2",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 359,
+                "TokenEndIdx": 366
+              },
+              "Splitter": "+=>",
+              "Constant": true,
+              "Decimal": {
+                "Lexeme": "50.0",
+                "TokenType": "decimal",
+                "TokenBeginIdx": 387,
+                "TokenEndIdx": 391
+              },
+              "BeginPosition": 350,
+              "EndPosition": 391
+            }
+          ],
+          "BeginPosition": 349,
+          "EndPosition": 392
+        },
+        "BeginPosition": 323,
+        "EndPosition": 393
+      },
+      "Properties": {
+        "@AstType": "NoneAssociation",
+        "BeginPosition": 408,
+        "EndPosition": 413
+      },
+      "BeginPosition": 208,
+      "EndPosition": 428
+    },
+    {
+      "@AstType": "ThreadSpec",
+      "Identifier": {
+        "Lexeme": "Thread3d",
+        "TokenType": "identifier",
+        "TokenBeginIdx": 439,
+        "TokenEndIdx": 447
+      },
+      "Features": {
+        "@AstType": "PortSpec",
+        "Identifier": {
+          "Lexeme": "AP_Position_Input",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 460,
+          "TokenEndIdx": 477
+        },
+        "IoType": "out",
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [
+            {
+              "@AstType": "Association",
+              "PreIdentifier": [
+                {
+                  "Lexeme": "result1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 532,
+                  "TokenEndIdx": 539
+                }
+              ],
+              "Identifier": {
+                "Lexeme": "result2",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 541,
+                "TokenEndIdx": 548
+              },
+              "Splitter": "+=>",
+              "Constant": true,
+              "Decimal": {
+                "Lexeme": "50.0",
+                "TokenType": "decimal",
+                "TokenBeginIdx": 569,
+                "TokenEndIdx": 573
+              },
+              "BeginPosition": 532,
+              "EndPosition": 573
+            }
+          ],
+          "BeginPosition": 531,
+          "EndPosition": 574
+        },
+        "PortType": {
+          "@AstType": "DataPort",
+          "Reference": {
+            "@AstType": "Reference",
+            "PackageName": {
+              "@AstType": "PackageName",
+              "Identifiers": [
+                {
+                  "Lexeme": "Nav_Types1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 494,
+                  "TokenEndIdx": 504
+                },
+                {
+                  "Lexeme": "Nav_Types2",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 506,
+                  "TokenEndIdx": 516
+                }
+              ],
+              "BeginPosition": 494,
+              "EndPosition": 518
+            },
+            "Identifier": {
+              "Lexeme": "Position_GPS",
+              "TokenType": "identifier",
+              "TokenBeginIdx": 518,
+              "TokenEndIdx": 530
+            },
+            "BeginPosition": 494,
+            "EndPosition": 530
+          },
+          "BeginPosition": 484,
+          "EndPosition": 530
+        },
+        "BeginPosition": 460,
+        "EndPosition": 575
+      },
+      "Flows": {
+        "@AstType": "FlowSinkSpec",
+        "PreIdentifier": {
+          "Lexeme": "flow1",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 592,
+          "TokenEndIdx": 597
+        },
+        "Identifier": {
+          "Lexeme": "signal",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 609,
+          "TokenEndIdx": 615
+        },
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [
+            {
+              "@AstType": "Association",
+              "PreIdentifier": [
+                {
+                  "Lexeme": "result1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 617,
+                  "TokenEndIdx": 624
+                }
+              ],
+              "Identifier": {
+                "Lexeme": "result2",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 626,
+                "TokenEndIdx": 633
+              },
+              "Splitter": "+=>",
+              "Constant": true,
+              "Decimal": {
+                "Lexeme": "50.0",
+                "TokenType": "decimal",
+                "TokenBeginIdx": 654,
+                "TokenEndIdx": 658
+              },
+              "BeginPosition": 617,
+              "EndPosition": 658
+            }
+          ],
+          "BeginPosition": 616,
+          "EndPosition": 659
+        },
+        "BeginPosition": 592,
+        "EndPosition": 660
+      },
+      "Properties": {
+        "@AstType": "Association",
+        "PreIdentifier": [],
+        "Identifier": {
+          "Lexeme": "size",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 675,
+          "TokenEndIdx": 679
+        },
+        "Splitter": "=>",
+        "Constant": true,
+        "Decimal": {
+          "Lexeme": "+50.0",
+          "TokenType": "decimal",
+          "TokenBeginIdx": 699,
+          "TokenEndIdx": 704
+        },
+        "BeginPosition": 675,
+        "EndPosition": 705
+      },
+      "BeginPosition": 432,
+      "EndPosition": 720
+    },
+    {
+      "@AstType": "ThreadSpec",
+      "Identifier": {
+        "Lexeme": "Thread4",
+        "TokenType": "identifier",
+        "TokenBeginIdx": 731,
+        "TokenEndIdx": 738
+      },
+      "Features": {
+        "@AstType": "ParameterSpec",
+        "Identifier": {
+          "Lexeme": "AP_Position_Input",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 751,
+          "TokenEndIdx": 768
+        },
+        "IoType": "inOut",
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [
+            {
+              "@AstType": "Association",
+              "PreIdentifier": [
+                {
+                  "Lexeme": "result1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 826,
+                  "TokenEndIdx": 833
+                }
+              ],
+              "Identifier": {
+                "Lexeme": "result2",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 835,
+                "TokenEndIdx": 842
+              },
+              "Splitter": "=>",
+              "Constant": true,
+              "Decimal": {
+                "Lexeme": "50.0",
+                "TokenType": "decimal",
+                "TokenBeginIdx": 862,
+                "TokenEndIdx": 866
+              },
+              "BeginPosition": 826,
+              "EndPosition": 866
+            }
+          ],
+          "BeginPosition": 825,
+          "EndPosition": 867
+        },
+        "Reference": {
+          "@AstType": "Reference",
+          "PackageName": {
+            "@AstType": "PackageName",
+            "Identifiers": [
+              {
+                "Lexeme": "Nav_Types1",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 788,
+                "TokenEndIdx": 798
+              },
+              {
+                "Lexeme": "Nav_Types2",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 800,
+                "TokenEndIdx": 810
+              }
+            ],
+            "BeginPosition": 788,
+            "EndPosition": 812
+          },
+          "Identifier": {
+            "Lexeme": "Position_GPS",
+            "TokenType": "identifier",
+            "TokenBeginIdx": 812,
+            "TokenEndIdx": 824
+          },
+          "BeginPosition": 788,
+          "EndPosition": 824
+        },
+        "BeginPosition": 751,
+        "EndPosition": 868
+      },
+      "Flows": {
+        "@AstType": "FlowSinkSpec",
+        "PreIdentifier": {
+          "Lexeme": "flow1",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 885,
+          "TokenEndIdx": 890
+        },
+        "Identifier": {
+          "Lexeme": "signal",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 902,
+          "TokenEndIdx": 908
+        },
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [
+            {
+              "@AstType": "Association",
+              "PreIdentifier": [
+                {
+                  "Lexeme": "result1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 910,
+                  "TokenEndIdx": 917
+                }
+              ],
+              "Identifier": {
+                "Lexeme": "result2",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 919,
+                "TokenEndIdx": 926
+              },
+              "Splitter": "+=>",
+              "Constant": true,
+              "Decimal": {
+                "Lexeme": "50.0",
+                "TokenType": "decimal",
+                "TokenBeginIdx": 947,
+                "TokenEndIdx": 951
+              },
+              "BeginPosition": 910,
+              "EndPosition": 951
+            }
+          ],
+          "BeginPosition": 909,
+          "EndPosition": 952
+        },
+        "BeginPosition": 885,
+        "EndPosition": 953
+      },
+      "Properties": {
+        "@AstType": "Association",
+        "PreIdentifier": [],
+        "Identifier": {
+          "Lexeme": "size",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 968,
+          "TokenEndIdx": 972
+        },
+        "Splitter": "=>",
+        "Constant": true,
+        "Decimal": {
+          "Lexeme": "-50.0",
+          "TokenType": "decimal",
+          "TokenBeginIdx": 992,
+          "TokenEndIdx": 997
+        },
+        "BeginPosition": 968,
+        "EndPosition": 998
+      },
+      "BeginPosition": 724,
+      "EndPosition": 1012
+    },
+    {
+      "@AstType": "ThreadSpec",
+      "Identifier": {
+        "Lexeme": "Thread5",
+        "TokenType": "identifier",
+        "TokenBeginIdx": 1023,
+        "TokenEndIdx": 1030
+      },
+      "Features": {
+        "@AstType": "PortSpec",
+        "Identifier": {
+          "Lexeme": "AP_Position_Input",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 1043,
+          "TokenEndIdx": 1060
+        },
+        "IoType": "inOut",
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [],
+          "BeginPosition": 1080,
+          "EndPosition": 1080
+        },
+        "PortType": {
+          "@AstType": "EventPort",
+          "BeginPosition": 1070,
+          "EndPosition": 1080
+        },
+        "BeginPosition": 1043,
+        "EndPosition": 1081
+      },
+      "Flows": {
+        "@AstType": "FlowSinkSpec",
+        "PreIdentifier": {
+          "Lexeme": "flow1",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 1098,
+          "TokenEndIdx": 1103
+        },
+        "Identifier": {
+          "Lexeme": "signal",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 1115,
+          "TokenEndIdx": 1121
+        },
+        "Associations": {
+          "@AstType": "AssociationBlock",
+          "Associations": [
+            {
+              "@AstType": "Association",
+              "PreIdentifier": [
+                {
+                  "Lexeme": "result1",
+                  "TokenType": "identifier",
+                  "TokenBeginIdx": 1123,
+                  "TokenEndIdx": 1130
+                }
+              ],
+              "Identifier": {
+                "Lexeme": "result2",
+                "TokenType": "identifier",
+                "TokenBeginIdx": 1132,
+                "TokenEndIdx": 1139
+              },
+              "Splitter": "+=>",
+              "Constant": true,
+              "Decimal": {
+                "Lexeme": "50.0",
+                "TokenType": "decimal",
+                "TokenBeginIdx": 1160,
+                "TokenEndIdx": 1164
+              },
+              "BeginPosition": 1123,
+              "EndPosition": 1164
+            }
+          ],
+          "BeginPosition": 1122,
+          "EndPosition": 1165
+        },
+        "BeginPosition": 1098,
+        "EndPosition": 1166
+      },
+      "Properties": {
+        "@AstType": "Association",
+        "PreIdentifier": [],
+        "Identifier": {
+          "Lexeme": "size",
+          "TokenType": "identifier",
+          "TokenBeginIdx": 1181,
+          "TokenEndIdx": 1185
+        },
+        "Splitter": "=>",
+        "Constant": true,
+        "Decimal": {
+          "Lexeme": "50.0",
+          "TokenType": "decimal",
+          "TokenBeginIdx": 1205,
+          "TokenEndIdx": 1209
+        },
+        "BeginPosition": 1181,
+        "EndPosition": 1210
+      },
+      "BeginPosition": 1016,
+      "EndPosition": 1224
+    },
+    {
+      "@AstType": "ThreadSpec",
+      "Identifier": {
+        "Lexeme": "Thread6",
+        "TokenType": "identifier",
+        "TokenBeginIdx": 1235,
+        "TokenEndIdx": 1242
+      },
+      "Features": {
+        "@AstType": "NoneFeature",
+        "BeginPosition": 1255,
+        "EndPosition": 1260
+      },
+      "Flows": {
+        "@AstType": "NoneFlowSpec",
+        "BeginPosition": 1277,
+        "EndPosition": 1282
+      },
+      "Properties": {
+        "@AstType": "NoneAssociation",
+        "BeginPosition": 1297,
+        "EndPosition": 1302
+      },
+      "BeginPosition": 1228,
+      "EndPosition": 1316
+    },
+    {
+      "@AstType": "ThreadSpec",
+      "Identifier": {
+        "Lexeme": "Thread7",
+        "TokenType": "identifier",
+        "TokenBeginIdx": 1327,
+        "TokenEndIdx": 1334
+      },
+      "Features": {
+        "@AstType": "NoneFeature",
+        "BeginPosition": 1336,
+        "EndPosition": 1336
+      },
+      "Flows": {
+        "@AstType": "NoneFlowSpec",
+        "BeginPosition": 1336,
+        "EndPosition": 1336
+      },
+      "Properties": {
+        "@AstType": "NoneAssociation",
+        "BeginPosition": 1336,
+        "EndPosition": 1336
+      },
+      "BeginPosition": 1320,
+      "EndPosition": 1348
+    }
+  ],
+  "BeginPosition": 0,
+  "EndPosition": 1348
+}
