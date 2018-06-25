@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 
-namespace Liu233w.Compiler.CodePiece.CodeGenerate.Control
+namespace Liu233w.Compiler.CodePiece.CodeGenerate
 {
     public class Control1Test
     {

@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Liu233w.Compiler.CodePiece.CodeGenerate.Control
+namespace Liu233w.Compiler.CodePiece.CodeGenerate
 {
     public class Control1
     {

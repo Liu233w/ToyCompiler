@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Liu233w.Compiler.CodePiece.CodeGenerate.Control
+namespace Liu233w.Compiler.CodePiece.CodeGenerate
 {
     /// <summary>
     /// 这个对象在代码生成中一直存在。假如某个过程需要储存全局数据，可以使用本类来创建一个“层”来储存数据。
