@@ -40,21 +40,19 @@ namespace Liu233w.Compiler.CodePiece.CodeGenerate.Control
                 .Should()
                 .Be(@"t1 = True
 if-false t1 goto L1
-label L4
-t2 = True
-if-false t2 goto L3
-t3 = False
-if-false t3 goto L5
-goto L3
-goto L6
-label L5
-Other Codes ...
-label L6
-goto L4
 label L3
+t2 = True
+if-false t2 goto L2
+t3 = False
+if-false t3 goto L4
 goto L2
-label L1
+goto L5
+label L4
+Other Codes ...
+label L5
+goto L3
 label L2
+label L1
 ");
         }
     }

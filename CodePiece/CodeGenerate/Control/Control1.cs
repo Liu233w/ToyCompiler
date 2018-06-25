@@ -53,18 +53,26 @@ namespace Liu233w.Compiler.CodePiece.CodeGenerate.Control
                 case IfStmt ifStmt:
                 {
                     CodeGen(ifStmt.Test);
-                    var elseLabel = GenLabel();
-                    var endLabel = GenLabel();
-                    Emit($"if-false {ifStmt.Test.StrVal} goto {elseLabel}");
-                    CodeGen(ifStmt.ThenPart);
-                    Emit($"goto {endLabel}");
-                    Emit($"label {elseLabel}");
+
                     if (ifStmt.ElsePart != null)
                     {
+                        var elseLabel = GenLabel();
+                        var endLabel = GenLabel();
+                        Emit($"if-false {ifStmt.Test.StrVal} goto {elseLabel}");
+                        CodeGen(ifStmt.ThenPart);
+                        Emit($"goto {endLabel}");
+                        Emit($"label {elseLabel}");
                         CodeGen(ifStmt.ElsePart);
+                        Emit($"label {endLabel}");
+                    }
+                    else
+                    {
+                        var endLabel = GenLabel();
+                        Emit($"if-false {ifStmt.Test.StrVal} goto {endLabel}");
+                        CodeGen(ifStmt.ThenPart);
+                        Emit($"label {endLabel}");
                     }
 
-                    Emit($"label {endLabel}");
                     break;
                 }
                 case WhileStmt whileStmt:
