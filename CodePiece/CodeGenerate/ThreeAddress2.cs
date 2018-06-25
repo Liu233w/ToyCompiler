@@ -68,6 +68,7 @@ namespace Liu233w.Compiler.CodePiece.CodeGenerate
                     case ArrayNode a:
                     {
                     }
+                        break;
                 }
             }
 
